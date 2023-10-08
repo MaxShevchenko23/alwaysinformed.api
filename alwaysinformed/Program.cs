@@ -1,4 +1,5 @@
-using alwaysinformed.DbContexts;
+
+using alwaysinformed.Entities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,8 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<AidbContext>(dbContextOptions => dbContextOptions.UseSqlServer("Server=DESKTOP-KKLFTJP;Database=aidb;Trusted_Connection=True;TrustServerCertificate=True"));
 
-builder.Services.AddDbContext<ArticleContext>(dbContextOptions => dbContextOptions.UseSqlServer("Data Source=DESKTOP-KKLFTJP;Database=aidb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Trusted_Connection=True"));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

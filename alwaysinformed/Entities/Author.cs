@@ -1,13 +1,19 @@
-﻿namespace alwaysinformed.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class Author
+namespace alwaysinformed.Entities;
+
+public partial class Author
 {
     public int AuthorId { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Email { get; set; }
-    public string Avatar { get; set; }
 
-    // Навигационное свойство для статей
-    public ICollection<Article> Articles { get; set; }
+    public string FirstName { get; set; } = null!;
+
+    public string LastName { get; set; } = null!;
+
+    public string Email { get; set; } = null!;
+
+    public string Avatar { get; set; } = null!;
+
+    public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
 }

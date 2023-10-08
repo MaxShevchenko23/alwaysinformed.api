@@ -1,18 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
 namespace alwaysinformed.Entities;
 
-public class Article
+public partial class Article
 {
-    public int ArticleId { get; set; }
-    public string Title { get; set; }
-    public string Content { get; set; }
-    public DateTime PublicationDate { get; set; }
-    public string Author { get; set; }
-    public string Category { get; set; }
-    public string Image { get; set; }
-    public string URL { get; set; }
-    public string ShortDescription { get; set; }
+    public string Content { get; set; } = null!;
 
-    public ICollection<Comment> Comments { get; set; }
+    public int ArticleId { get; set; }
+
+    public int? AuthorId { get; set; }
+
+    public int? CategoryId { get; set; }
+
+    public string Image { get; set; } = null!;
+
+    public DateTime PublicationDate { get; set; }
+
+    public string ShortDescription { get; set; } = null!;
+
+    public string Title { get; set; } = null!;
+
+    public string Url { get; set; } = null!;
+
+    public virtual Author? Author { get; set; }
+
+    public virtual Category? Category { get; set; }
+
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+    public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 }

@@ -1,13 +1,17 @@
-﻿namespace alwaysinformed.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class Favorite
+namespace alwaysinformed.Entities;
+
+public partial class Favorite
 {
     public int FavoriteId { get; set; }
 
-    // Внешний ключи для связей с пользователем и публикацией
     public int UserId { get; set; }
+
     public int ArticleId { get; set; }
 
-    public User User { get; set; }
-    public Article Article { get; set; }
+    public virtual Article Article { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
 }

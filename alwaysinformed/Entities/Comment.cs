@@ -1,13 +1,19 @@
-﻿namespace alwaysinformed.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class Comment
+namespace alwaysinformed.Entities;
+
+public partial class Comment
 {
     public int CommentId { get; set; }
-    public string Text { get; set; }
-    public DateTime DateTime { get; set; }
-    public string UserName { get; set; }
 
-    // Внешний ключ для связи с публикацией
+    public string Text { get; set; } = null!;
+
+    public DateTime DateTime { get; set; }
+
+    public string UserName { get; set; } = null!;
+
     public int ArticleId { get; set; }
-    public Article Article { get; set; }
+
+    public virtual Article Article { get; set; } = null!;
 }

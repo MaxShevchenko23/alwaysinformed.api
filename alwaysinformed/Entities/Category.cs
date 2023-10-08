@@ -1,10 +1,13 @@
-﻿namespace alwaysinformed.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public class Category
+namespace alwaysinformed.Entities;
+
+public partial class Category
 {
     public int CategoryId { get; set; }
-    public string CategoryName { get; set; }
 
-    // Навигационное свойство для статей
-    public ICollection<Article> Articles { get; set; }
+    public string CategoryName { get; set; } = null!;
+
+    public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
 }
