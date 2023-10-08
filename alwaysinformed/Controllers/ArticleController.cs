@@ -1,4 +1,5 @@
-﻿using alwaysinformed.Entities;
+﻿using alwaysinformed.DbContexts;
+using alwaysinformed.Entities;
 using alwaysinformed.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,11 @@ namespace alwaysinformed.Controllers
     [ApiController]
     public class ArticleController : ControllerBase
     {
-        public ArticleController()
+        private readonly ArticleContext _context;
+
+        public ArticleController(ArticleContext context)
         {
-            
+            _context = context;
         }
 
         [HttpGet("Home")]
@@ -95,6 +98,13 @@ namespace alwaysinformed.Controllers
             };
             return Ok(list);
                             
+        }
+
+        [HttpGet("{articleurl}")]
+        public ActionResult GetArticle(string articleurl)
+        {
+            var article = _context.Articles.FirstOrDefault(a => a.URL== articleurl);
+            return Ok();
         }
     }
 }
