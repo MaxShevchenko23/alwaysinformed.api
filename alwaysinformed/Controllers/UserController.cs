@@ -1,8 +1,6 @@
 ﻿using alwaysinformed.Entities;
 using alwaysinformed.Models;
-using alwaysinformed.Services;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace alwaysinformed.Controllers
@@ -40,16 +38,40 @@ namespace alwaysinformed.Controllers
             return NotFound();
         }
         [HttpPost("/addToFavorites/{userId}/{articleId}")]
-        public ActionResult<Article> AddToFavorites(int userId, int articleId)
+        //рассмотреть вариант, когда уже в избранном
+        public ActionResult AddToFavorites(int userId, int articleId)
         {
-            if (context.Users.FirstOrDefault(u => u.UserId == userId) == null || 
+            if (context.Users.FirstOrDefault(u => u.UserId == userId) == null ||
                 context.Articles.FirstOrDefault(a => a.ArticleId == articleId) == null)
             {
                 return NotFound();
             }
             context.Add(new Favorite { UserId = userId, ArticleId = articleId });
             context.SaveChanges(true);
+            return NoContent();
+        }
+
+        //метод удаления из избранного
+
+
+
+        [HttpPost("/leaveComment")]
+        public ActionResult LeaveComment(CommentDto commentDto)
+        {
+            if (commentDto.UserName == string.Empty || commentDto.Text == string.Empty || commentDto.ArticleId == null || commentDto.ArticleId == null && commentDto.ArticleId == 0)
+            {
+                return ValidationProblem();
+            }
+            var comment = mapper.Map<Comment>(commentDto);
+            comment.DateTime = DateTime.Now;
+            context.Add(comment);
+            context.SaveChanges(true);
             return Ok();
         }
+
+        //метод удаления комментария
+
+
+
     }
 }
