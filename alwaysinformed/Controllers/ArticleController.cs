@@ -20,30 +20,27 @@ namespace alwaysinformed.Controllers
             this.context = context;
             this.mapper = mapper;
         }
+        //[HttpGet("/latestarticles/{n}")]
+        //public ActionResult<IEnumerable<Article>> GetLatestArticles(int n)
+        //{
+        //    var articles = from a in context.Articles 
+        //                   orderby a.ArticleId descending
+        //                   select a ;
 
-        
-
-        [HttpGet("/latestarticles/{n}")]
-        public ActionResult<IEnumerable<Article>> GetLatestArticles(int n)
-        {
-            var articles = from a in context.Articles 
-                           orderby a.ArticleId descending
-                           select a ;
-
-            return Ok(articles.Take(n));
-        }
+        //    return Ok(articles.Take(n));
+        //}
 
 
-        [HttpGet("{articleurl}")]
-        public ActionResult<Article> GetArticle(string articleurl)
-        {
-            var article = context.Articles.FirstOrDefault(a => a.Url == articleurl);
-            if (article != null)
-            {
-                return Ok(article);
-            }
-            return NotFound();
-        }
+        //[HttpGet("{articleurl}")]
+        //public ActionResult<Article> GetArticle(string articleurl)
+        //{
+        //    var article = context.Articles.FirstOrDefault(a => a.Url == articleurl);
+        //    if (article != null)
+        //    {
+        //        return Ok(article);
+        //    }
+        //    return NotFound();
+        //}
         [HttpPost]
         public ActionResult<Article> CreateArticle(ArticleForCreatingDto articleDto)
         {           
