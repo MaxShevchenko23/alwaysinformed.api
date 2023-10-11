@@ -16,4 +16,7 @@ public partial class Author
     public string Avatar { get; set; } = null!;
 
     public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
+    public int? UserId { get; set; }
+    public User User { get; set; }
+
 }
