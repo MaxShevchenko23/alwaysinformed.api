@@ -7,14 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DbContexts\**" />
+    <Content Remove="DbContexts\**" />
+    <EmbeddedResource Remove="DbContexts\**" />
+    <None Remove="DbContexts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.11">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.23" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.13">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
@@ -22,9 +31,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DbContexts\" />
-    <Folder Include="Entities\" />
-    <Folder Include="Migrations\" />
+    <Folder Include="Views\Articles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\alwaysinformed-bll\alwaysinformed-bll.csproj" />
   </ItemGroup>
 
 </Project>

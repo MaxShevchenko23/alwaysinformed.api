@@ -6,7 +6,8 @@ namespace alwaysinformed.MapperProfiles
     {
         public ArticleProfile()
         {
-            CreateMap<Entities.Article, Models.ArticleForCreatingDto>();
+            
+            
         }
     }
 }

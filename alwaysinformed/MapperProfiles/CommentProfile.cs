@@ -6,8 +6,7 @@ namespace alwaysinformed.MapperProfiles
     {
         public CommentProfile()
         {
-            CreateMap<Entities.Comment, Models.CommentDto>();
-            CreateMap<Models.CommentDto, Entities.Comment>();
+            
         }
 
     }

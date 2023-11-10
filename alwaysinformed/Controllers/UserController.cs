@@ -1,7 +1,12 @@
-﻿using alwaysinformed.Entities;
-using alwaysinformed.Models;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using alwaysinformed_dal.Data;
+using alwaysinformed_bll.Services;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Humanizer;
+using alwaysinformed_bll.Models.GET;
+using alwaysinformed_bll.Models.POST;
+using alwaysinformed_bll.Models.UPDATE;
 
 namespace alwaysinformed.Controllers
 {
@@ -9,69 +14,45 @@ namespace alwaysinformed.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private AidbContext context;
-        private IMapper mapper;
+        private readonly UserService service;
 
-        public UserController(AidbContext context, IMapper mapper)
+        public UserController(UserService service)
         {
-            this.context = context;
-            this.mapper = mapper;
+            this.service = service;
         }
-        [HttpGet("/latestarticles/{n}")]
-        public ActionResult<IEnumerable<Article>> GetLatestArticles(int n)
+         
+        [HttpGet("get")]
+        public async Task<ActionResult> UserGetAsync([FromQuery] int id)
         {
-            var articles = from a in context.Articles
-                           orderby a.ArticleId descending
-                           select a;
-
-            return Ok(articles.Take(n));
+            var user = await service.GetByIdAsync(id) ?? throw new ArgumentNullException();
+            return Ok(user);
         }
-
-        [HttpGet("{articleurl}")]
-        public ActionResult<Article> GetArticle(string articleurl)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserGetDto>>> GetAllUsersAsync()
         {
-            var article = context.Articles.FirstOrDefault(a => a.Url == articleurl);
-            if (article != null)
-            {
-                return Ok(article);
-            }
-            return NotFound();
-        }
-        [HttpPost("/addToFavorites/{userId}/{articleId}")]
-        //рассмотреть вариант, когда уже в избранном
-        public ActionResult AddToFavorites(int userId, int articleId)
-        {
-            if (context.Users.FirstOrDefault(u => u.UserId == userId) == null ||
-                context.Articles.FirstOrDefault(a => a.ArticleId == articleId) == null)
-            {
-                return NotFound();
-            }
-            context.Add(new Favorite { UserId = userId, ArticleId = articleId });
-            context.SaveChanges(true);
-            return NoContent();
+            var dtos = await service.GetAllAsync();
+            return Ok(dtos);
         }
 
-        //метод удаления из избранного
-
-
-
-        [HttpPost("/leaveComment")]
-        public ActionResult LeaveComment(CommentDto commentDto)
+        [HttpPost]
+        public async Task<ActionResult> UserPostAsync([FromBody] UserPostDto model)
         {
-            if (commentDto.UserName == string.Empty || commentDto.Text == string.Empty || commentDto.ArticleId == null || commentDto.ArticleId == null && commentDto.ArticleId == 0)
-            {
-                return ValidationProblem();
-            }
-            var comment = mapper.Map<Comment>(commentDto);
-            comment.DateTime = DateTime.Now;
-            context.Add(comment);
-            context.SaveChanges(true);
+            await service.AddAsync(model);
+            return Ok();
+        }
+       
+        [HttpDelete]
+        public async Task<ActionResult> UserDeleteAsync([FromQuery] int id)
+        {
+            await service.DeleteByIdAsync(id);
             return Ok();
         }
 
-        //метод удаления комментария
-
-
-
+        [HttpPut]
+        public async Task<ActionResult> UpdateUserAsync([FromBody] UserUpdateDto model)
+        {
+            await service.UpdateAsync(model);
+            return Ok();
+        }
     }
 }
