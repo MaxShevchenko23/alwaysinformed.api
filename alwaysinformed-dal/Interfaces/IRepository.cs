@@ -17,7 +17,7 @@ namespace alwaysinformed_dal.Interfaces
         //Task<List<TEntity>> GetLastRecords(int amount);
 
         public Task AddAsync(TEntity entity);
-        public void Delete(TEntity entity);
+        public void DeleteAsync(TEntity entity);
 
         public Task DeleteByIdAsync(int id);
 

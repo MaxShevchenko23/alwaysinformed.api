@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace alwaysinformed_bll.Models.GET
 {
-    public class UserGetDto
+    public class UserRoleGetDto
     {
-        public int UserId { get; set; }
+        public int UserRoleId { get; set; }
 
-        public string Username { get; set; } = null!;
-
-        public int UserRole { get; set; }
+        public string UserRoleName { get; set; } = null!;
     }
 }

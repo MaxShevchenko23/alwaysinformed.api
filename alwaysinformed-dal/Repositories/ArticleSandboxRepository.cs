@@ -2,11 +2,6 @@
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace alwaysinformed_dal.Repositories
 {
@@ -24,14 +19,19 @@ namespace alwaysinformed_dal.Repositories
            await context.AddAsync(entity);
         }
 
-        public void Delete(ArticleSandbox entity)
+        public async void DeleteAsync(ArticleSandbox entity)
         {
+            
             context.ArticleSandboxes.Remove(entity);
         }
 
         public async Task DeleteByIdAsync(int id)
         {
-            var entity = await context.ArticleSandboxes.FirstOrDefaultAsync(x => x.ArticleId == id) ?? throw new ArgumentNullException();
+            var entity = await context.ArticleSandboxes.FirstOrDefaultAsync(x => x.SandboxId == id) ?? throw new ArgumentNullException();
+            //КАСТЫЛЬ ALERT
+            ArticleRepository rep = new(context);
+            await rep.DeleteArticleBySandboxId(entity.SandboxId);
+
             context.ArticleSandboxes.Remove(entity);
         }
 
@@ -40,19 +40,35 @@ namespace alwaysinformed_dal.Repositories
             return await context.ArticleSandboxes.ToListAsync();
         }
 
-        public async Task<ArticleSandbox> GetByIdAsync(int id)
+        public async Task<List<ArticleSandbox>> GetByAuthorId(int authorId)
         {
-            return await context.ArticleSandboxes.FirstOrDefaultAsync(x => x.ArticleId == id);
+            return await context.ArticleSandboxes.Where(a => a.AuthorId == authorId).ToListAsync();
+        }
+
+        public async Task<ArticleSandbox?> GetByIdAsync(int id)
+        {
+            return await context.ArticleSandboxes.FirstOrDefaultAsync(x => x.SandboxId == id);
+        }
+        public async Task<ArticleSandbox?> GetByURLAsync(string url)
+        {
+            return await context.ArticleSandboxes.FirstOrDefaultAsync(x => x.Url == url);
+        }
+
+        public async Task<List<ArticleSandbox>> GetByUserId(int id)
+        {
+            var author = await context.Authors.FirstAsync(c => c.UserId == id);
+            return await context.ArticleSandboxes.Where(a => a.AuthorId == author.AuthorId).ToListAsync();
+
         }
 
         public async Task<List<ArticleSandbox>> GetFirstRecords(int amount)
         {
-            return await context.ArticleSandboxes.Where(d => d.ArticleId <= amount).ToListAsync();
+            return await context.ArticleSandboxes.Where(d => d.SandboxId <= amount).ToListAsync();
         }
 
         public async Task<List<ArticleSandbox>> GetLastRecords(int amount)
         {
-            return await context.ArticleSandboxes.OrderByDescending(m => m.ArticleId).Take(amount).ToListAsync();
+            return await context.ArticleSandboxes.OrderByDescending(m => m.SandboxId).Take(amount).ToListAsync();
         }
 
         public void Update(ArticleSandbox entity)

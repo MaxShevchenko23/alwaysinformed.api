@@ -24,6 +24,7 @@ namespace alwaysinformed_bll.Models.UPDATE
         public string ShortDescription { get; set; } = null!;
 
         public string Title { get; set; } = null!;
+        public int? ArticleSandboxId { get; set; }
 
         public string Url { get; set; } = null!;
 

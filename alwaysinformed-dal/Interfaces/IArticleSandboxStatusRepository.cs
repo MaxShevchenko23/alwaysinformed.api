@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace alwaysinformed_dal.Interfaces
 {
-    public interface IArticleSandboxRepository:IRepository<ArticleSandbox>
+    public interface IArticleSandboxStatusRepository:IRepository<ArticleSandboxStatus>
     {
-        Task<List<ArticleSandbox>> GetByAuthorId(int id);
-        Task<List<ArticleSandbox>> GetByUserId(int id);
     }
 }

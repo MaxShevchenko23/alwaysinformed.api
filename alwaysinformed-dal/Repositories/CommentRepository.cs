@@ -24,7 +24,7 @@ namespace alwaysinformed_dal.Repositories
             await context.Comments.AddAsync(entity);
         }
 
-        public void Delete(Comment entity)
+        public void DeleteAsync(Comment entity)
         {
             context.Comments.Remove(entity);
         }

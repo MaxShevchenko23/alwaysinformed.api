@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace alwaysinformed_bll.Services
 {
-    public class ArticleService : IArticleService
+    public class ArticleService : IArticleService,IDisposable
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
@@ -31,13 +31,18 @@ namespace alwaysinformed_bll.Services
             entity.Url = UrlGenerator.GenerateUrl();
             entity.PublicationDate = DateTime.Now;
             await unitOfWork.ArticleRepository.AddAsync(entity);
-            unitOfWork.SaveChanges();
+            await unitOfWork.SaveChanges();
         }
 
         public async Task DeleteByIdAsync(int modelId)
         {
             await unitOfWork.ArticleRepository.DeleteByIdAsync(modelId);
-            unitOfWork.SaveChanges();
+            await unitOfWork.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
 
         public async Task<IEnumerable<ArticleGetFullDto>> GetAllAsync()
@@ -97,7 +102,7 @@ namespace alwaysinformed_bll.Services
         {
             var entity = mapper.Map<Article>(model);
             unitOfWork.ArticleRepository.Update(entity);
-            unitOfWork.SaveChanges();
+            await unitOfWork.SaveChanges();
         }
     }
 }

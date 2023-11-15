@@ -47,7 +47,7 @@ namespace alwaysinformed.Controllers
             return Ok();
         }
         [HttpPut]
-        public async Task<ActionResult> GetShortLastArticlesAsync([FromBody] CommentUpdateDto dto)
+        public async Task<ActionResult> CommentUpdateAsync([FromBody] CommentUpdateDto dto)
         {
             await service.UpdateAsync(dto);
             return Ok();

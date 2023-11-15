@@ -12,6 +12,8 @@
         public string ShortDescription { get; set; } = null!;
 
         public string Title { get; set; } = null!;
+        public int? ArticleSandboxId { get; set; }
+
 
     }
 }

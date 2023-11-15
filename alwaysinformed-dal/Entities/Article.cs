@@ -23,6 +23,10 @@ public partial class Article
 
     public string Url { get; set; } = null!;
 
+    public int? ArticleSandboxId { get; set; }
+
+    public virtual ArticleSandbox? ArticleSandbox { get; set; }
+
     public virtual Author? Author { get; set; }
 
     public virtual Category? Category { get; set; }

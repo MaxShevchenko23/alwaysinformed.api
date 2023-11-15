@@ -23,7 +23,7 @@ namespace alwaysinformed_dal.Repositories
             await context.Users.AddAsync(entity);
         }
 
-        public void Delete(User entity)
+        public void DeleteAsync(User entity)
         {
             context.Users.Remove(entity);
         }

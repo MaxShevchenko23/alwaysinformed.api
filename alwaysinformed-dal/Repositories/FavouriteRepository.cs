@@ -23,7 +23,7 @@ namespace alwaysinformed_dal.Repositories
             await context.Favorites.AddAsync(entity);
         }
 
-        public void Delete(Favorite entity)
+        public void DeleteAsync(Favorite entity)
         {
             context.Favorites.Remove(entity);
         }

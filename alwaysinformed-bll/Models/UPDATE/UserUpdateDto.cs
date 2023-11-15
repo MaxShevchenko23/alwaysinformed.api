@@ -17,6 +17,6 @@ namespace alwaysinformed_bll.Models.UPDATE
 
         public string Email { get; set; } = null!;
 
-        public string UserRole { get; set; } = null!;
+        public int UserRole { get; set; } 
     }
 }

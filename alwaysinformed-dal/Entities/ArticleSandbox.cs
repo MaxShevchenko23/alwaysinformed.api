@@ -7,7 +7,7 @@ public partial class ArticleSandbox
 {
     public string Content { get; set; } = null!;
 
-    public int ArticleId { get; set; }
+    public int SandboxId { get; set; }
 
     public int? AuthorId { get; set; }
 
@@ -22,6 +22,16 @@ public partial class ArticleSandbox
     public string Title { get; set; } = null!;
 
     public string Url { get; set; } = null!;
+
+    public string? AdminEmail { get; set; }
+
+    public int ArticleStatus { get; set; }
+
+    public string? ArticleAdminComment { get; set; }
+
+    public virtual ArticleSandboxStatus ArticleStatusNavigation { get; set; } = null!;
+
+    public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
 
     public virtual Author? Author { get; set; }
 

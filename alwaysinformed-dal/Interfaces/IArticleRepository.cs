@@ -14,5 +14,7 @@ namespace alwaysinformed_dal.Interfaces
 
         Task<List<Article>> GetLastRecords(int amount);
         Task<Article> GetArticleByURL(string url);
+        Task<Article?> GetArticleByArticleSandboxId(int articleSandboxId);
+        Task DeleteArticleBySandboxId(int sandboxId);
     }
 }

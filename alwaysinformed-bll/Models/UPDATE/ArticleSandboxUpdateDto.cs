@@ -1,17 +1,16 @@
-﻿using alwaysinformed_dal.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace alwaysinformed_bll.Models.GET
+namespace alwaysinformed_bll.Models.UPDATE
 {
-    public class ArticleGetFullDto
+    public class ArticleSandboxUpdateDto
     {
         public string Content { get; set; } = null!;
 
-        public int ArticleId { get; set; }
+        public int SandboxId { get; set; }
 
         public int? AuthorId { get; set; }
 
@@ -26,12 +25,11 @@ namespace alwaysinformed_bll.Models.GET
         public string Title { get; set; } = null!;
 
         public string Url { get; set; } = null!;
-        public int? ArticleSandboxId { get; set; }
 
+        public string? AdminEmail { get; set; }
 
-        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public int ArticleStatus { get; set; }
 
-        public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
-
+        public string? ArticleAdminComment { get; set; }
     }
 }

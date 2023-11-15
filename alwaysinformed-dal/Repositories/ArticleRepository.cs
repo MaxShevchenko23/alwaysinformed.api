@@ -2,7 +2,7 @@
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
-
+using System.Data.Common;
 
 namespace alwaysinformed_dal.Repositories
 {
@@ -24,7 +24,13 @@ namespace alwaysinformed_dal.Repositories
             await context.Articles.AddAsync(article);
         }
 
-        public async void Delete(Article entity)
+        public async Task DeleteArticleBySandboxId(int sandboxId)
+        {
+            var article = await context.Articles.FirstAsync(a=>a.ArticleSandboxId==sandboxId) ?? throw new AiDbException();
+            context.Remove(article);
+        }
+
+        public async void DeleteAsync(Article entity)
         {
             context.Articles.Remove(entity);
         }
@@ -37,7 +43,16 @@ namespace alwaysinformed_dal.Repositories
 
         public async Task<List<Article>> GetAllAsync()
         {
-            return await context.Articles.ToListAsync();
+            var articles = from a in context.Articles
+                           join s in context.ArticleSandboxes on a.ArticleSandboxId equals s.SandboxId
+                           select a;
+
+            return await articles.ToListAsync();
+        }
+
+        public async Task<Article?> GetArticleByArticleSandboxId(int articleSandboxId)
+        {
+            return await context.Articles.AsNoTracking().FirstOrDefaultAsync(c=>c.ArticleSandboxId == articleSandboxId);
         }
 
         public async Task<Article> GetArticleByURL(string url)
@@ -52,11 +67,13 @@ namespace alwaysinformed_dal.Repositories
 
         public async Task<List<Article>> GetFirstRecords(int amount)
         {
+            //статьи должны быть с привязанными articlesandboxid
             return await context.Articles.Take(amount).ToListAsync();
         }
 
         public async Task<List<Article>> GetLastRecords(int amount)
         {
+            //статьи должны быть с привязанными articlesandboxid
             return await context.Articles.OrderByDescending(m => m.ArticleId).Take(amount).ToListAsync();
         }
 

@@ -30,6 +30,8 @@ builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ArticleSandboxService>();
 builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<FavoriteService>();
+builder.Services.AddScoped<ArticleSandboxStatusService>();
+builder.Services.AddScoped<UserRoleService>();
 
 
 builder.Services.AddControllers()

@@ -18,6 +18,7 @@ namespace alwaysinformed_bll.MapperProfiles
             CreateMap<Article, ArticlePostDto>().ReverseMap();
             CreateMap<Article, ArticleGetFullDto>().ReverseMap();
             CreateMap<Article, ArticleGetShortDto>().ReverseMap();
+            CreateMap<Article, ArticleUpdateDto>().ReverseMap();
             CreateMap<Author, AuthorGetDto>().ReverseMap();
             CreateMap<Category,CategoryGetDto>().ReverseMap();
             CreateMap<Category,CategoryPost>().ReverseMap();
@@ -27,6 +28,16 @@ namespace alwaysinformed_bll.MapperProfiles
             CreateMap<User, UserPostDto>().ReverseMap();
             CreateMap<User, UserGetDto>().ReverseMap();
             CreateMap<User, UserUpdateDto>().ReverseMap();
+            CreateMap<ArticleSandboxStatus, ArticleSandboxStatusGetDto>().ReverseMap();
+            CreateMap<UserRole, UserRoleGetDto>().ReverseMap();
+            CreateMap<ArticleSandbox, ArticleSandboxGetDto>().ReverseMap();
+            CreateMap<ArticleSandbox, ArticleSandboxPostDto>().ReverseMap();
+            CreateMap<ArticleSandbox, ArticleSandboxUpdateDto>().ReverseMap();
+            CreateMap<ArticleSandbox, ArticlePostDto>().ReverseMap();
+            CreateMap<ArticleSandbox, ArticleUpdateDto>().ReverseMap();
+            CreateMap<ArticleSandboxUpdateDto, ArticleUpdateDto>().ReverseMap();
+
+
 
         }
     }

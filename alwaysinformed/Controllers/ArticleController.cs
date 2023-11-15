@@ -69,7 +69,9 @@ public class ArticleController : ControllerBase
     [HttpGet("get/full/url")]
     public async Task<ActionResult<ArticleGetShortDto>> GetFullArticleByURLAsync([FromQuery] string url)
     {
-        var article = await service.GetArticleByURL(url) ?? throw new APIException("not found");
+        var article = await service.GetArticleByURL(url);
+        if (article == null)
+            return NotFound();
         return Ok(article);
     }
 

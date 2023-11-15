@@ -25,7 +25,11 @@ namespace alwaysinformed_dal.Data
 
         public IUserRepository UserRepository => new UserRepository(context);
 
-        public async void SaveChanges()
+        public IUserRoleRepository UserRoleRepository => new UserRoleRepository(context);
+
+        public IArticleSandboxStatusRepository ArticleSandboxStatusRepository => new ArticleSandboxStatusRepository(context);
+
+        public async Task SaveChanges()
         {
             await context.SaveChangesAsync();
         }

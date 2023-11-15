@@ -11,7 +11,11 @@ namespace alwaysinformed_dal.Interfaces
         public ICategoryRepository CategoryRepository { get; }
         public IFavoriteRepository FavoriteRepository { get; }
         public IUserRepository UserRepository { get; }
-        public void SaveChanges();
+        public IUserRoleRepository UserRoleRepository { get; }
+        public IArticleSandboxStatusRepository ArticleSandboxStatusRepository { get; }
+
+
+        public Task SaveChanges();
 
     }
 }

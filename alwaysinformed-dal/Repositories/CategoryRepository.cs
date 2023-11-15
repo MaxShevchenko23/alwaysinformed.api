@@ -23,7 +23,7 @@ namespace alwaysinformed_dal.Repositories
             await context.Categories.AddAsync(entity);
         }
 
-        public void Delete(Category entity)
+        public void DeleteAsync(Category entity)
         {
             context.Categories.Remove(entity);
         }
