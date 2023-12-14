@@ -2,11 +2,6 @@
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace alwaysinformed_dal.Repositories
 {
@@ -18,9 +13,12 @@ namespace alwaysinformed_dal.Repositories
         {
             this.context = context;
         }
-        public async Task AddAsync(Favorite entity)
+        public async Task<Favorite> AddAsync(Favorite entity)
         {
             await context.Favorites.AddAsync(entity);
+            await context.SaveChangesAsync(true);
+            var added = await context.Favorites.Where(f=>f.UserId == entity.UserId).FirstAsync();
+            return added;
         }
 
         public void DeleteAsync(Favorite entity)
@@ -55,9 +53,12 @@ namespace alwaysinformed_dal.Repositories
             return await context.Favorites.OrderByDescending(m => m.FavoriteId).Take(amount).ToListAsync();
         }
 
-        public void Update(Favorite entity)
+        public async Task<Favorite> Update(Favorite entity)
         {
             context.Favorites.Update(entity);
+            await context.SaveChangesAsync(true);
+            var updated = await context.Favorites.FirstAsync(a => a.ArticleId == entity.ArticleId && a.UserId == entity.UserId);
+            return updated;
         }
     }
 }

@@ -2,11 +2,6 @@
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace alwaysinformed_dal.Repositories
 {
@@ -18,9 +13,11 @@ namespace alwaysinformed_dal.Repositories
         {
             this.context = context;
         }
-        public async Task AddAsync(Category entity)
+        public async Task<Category> AddAsync(Category entity)
         {
             await context.Categories.AddAsync(entity);
+            await context.SaveChangesAsync(true);
+            return await context.Categories.FirstOrDefaultAsync(c => c.CategoryName == entity.CategoryName);
         }
 
         public void DeleteAsync(Category entity)
@@ -55,9 +52,14 @@ namespace alwaysinformed_dal.Repositories
             return await context.Categories.OrderByDescending(m => m.CategoryId).Take(amount).ToListAsync();
         }
 
-        public void Update(Category entity)
+        public async Task<Category> Update(Category entity)
         {
             context.Categories.Update(entity);
+            await context.SaveChangesAsync(true);
+
+            var updated = await context.Categories.FirstOrDefaultAsync(c => c.CategoryName == entity.CategoryName);
+            return updated;
         }
+
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace alwaysinformed.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class AuthorController : ControllerBase
 {
@@ -19,7 +19,7 @@ public class AuthorController : ControllerBase
         this.service = service;
     }
 
-    [HttpGet("get/id")]
+    [HttpGet("id")]
     public async Task<ActionResult> AuthorGetByIdAsync([FromQuery] int id)
     {
         var author = await service.GetByIdAsync(id) ?? throw new APIException("ArgumentCannotBeNull");

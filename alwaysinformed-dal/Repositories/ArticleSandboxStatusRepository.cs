@@ -19,7 +19,7 @@ namespace alwaysinformed_dal.Repositories
             this.context = context;
         }
 
-        public Task AddAsync(ArticleSandboxStatus entity)
+        public Task<ArticleSandboxStatus> AddAsync(ArticleSandboxStatus entity)
         {
             throw new NotImplementedException();
         }
@@ -44,7 +44,7 @@ namespace alwaysinformed_dal.Repositories
             return await context.ArticleSandboxStatuses.FirstOrDefaultAsync(c => c.StatusId == id);
         }
 
-        public void Update(ArticleSandboxStatus entity)
+        public Task<ArticleSandboxStatus> Update(ArticleSandboxStatus entity)
         {
             throw new NotImplementedException();
         }

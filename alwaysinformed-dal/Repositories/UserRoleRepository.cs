@@ -18,7 +18,7 @@ namespace alwaysinformed_dal.Repositories
         {
             this.context = context;
         }
-        public Task AddAsync(UserRole entity)
+        public Task<UserRole> AddAsync(UserRole entity)
         {
             throw new NotImplementedException();
         }
@@ -43,7 +43,7 @@ namespace alwaysinformed_dal.Repositories
             return await context.UserRoles.FirstOrDefaultAsync(c => c.UserRoleId == id);
         }
 
-        public void Update(UserRole entity)
+        public Task<UserRole> Update(UserRole entity)
         {
             throw new NotImplementedException();
         }

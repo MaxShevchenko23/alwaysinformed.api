@@ -19,11 +19,13 @@ namespace alwaysinformed_bll.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
-        public async Task AddAsync(CategoryPost model)
+        public async Task<CategoryGetDto> AddAsync(CategoryPost model)
         {
             var entity = mapper.Map<Category>(model);
             await unitOfWork.CategoryRepository.AddAsync(entity);
-            unitOfWork.SaveChanges();
+            var added = await unitOfWork.CategoryRepository.AddAsync(entity);
+
+            return mapper.Map<CategoryGetDto>(added);
         }
 
         public async Task DeleteByIdAsync(int modelId)
@@ -44,10 +46,11 @@ namespace alwaysinformed_bll.Services
             return mapper.Map<CategoryGetDto>(entity);
         }
 
-        public async Task UpdateAsync(CategoryUpdateDto model)
+        public async Task<CategoryGetDto> UpdateAsync(CategoryUpdateDto model)
         {
-            unitOfWork.CategoryRepository.Update(mapper.Map<Category>(model));
-            unitOfWork.SaveChanges();
+            var updated = unitOfWork.CategoryRepository.Update(mapper.Map<Category>(model));
+
+            return mapper.Map<CategoryGetDto>(updated);
         }
     }
 }

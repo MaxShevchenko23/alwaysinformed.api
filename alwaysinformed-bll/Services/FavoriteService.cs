@@ -19,11 +19,12 @@ namespace alwaysinformed_bll.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
-        public async Task AddAsync(FavoritePostDto model)
+        public async Task<FavoriteGetDto> AddAsync(FavoritePostDto model)
         {
             var entity = mapper.Map<Favorite>(model);
-            await unitOfWork.FavoriteRepository.AddAsync(entity);
-            unitOfWork.SaveChanges();
+            var added = await unitOfWork.FavoriteRepository.AddAsync(entity);
+            return mapper.Map<FavoriteGetDto>(added);
+            
         }
         public async Task DeleteByIdAsync(int modelId)
         {
@@ -40,11 +41,11 @@ namespace alwaysinformed_bll.Services
             var favorite = await unitOfWork.FavoriteRepository.GetByIdAsync(id);
             return mapper.Map<FavoriteGetDto>(favorite);
         }
-        public async Task UpdateAsync(FavoriteUpdateDto model)
+        public async Task<FavoriteGetDto> UpdateAsync(FavoriteUpdateDto model)
         {
             var entity = mapper.Map<Favorite>(model);
-            unitOfWork.FavoriteRepository.Update(entity);
-            unitOfWork.SaveChanges();
+            var updated = unitOfWork.FavoriteRepository.Update(entity);
+            return mapper.Map<FavoriteGetDto>(updated);
         }
     }
 }

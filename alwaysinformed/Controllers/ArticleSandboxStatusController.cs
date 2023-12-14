@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace alwaysinformed.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ArticleSandboxStatusController : ControllerBase
     {
@@ -22,8 +22,8 @@ namespace alwaysinformed.Controllers
             return Ok(statuses);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ArticleSandboxStatusGetDto>> GetStatusByIdAsync(int id)
+        [HttpGet("id")]
+        public async Task<ActionResult<ArticleSandboxStatusGetDto>> GetStatusByIdAsync([FromQuery]int id)
         {
             var status = await service.ArticleSandboxStatusGetDtoByIdAsync(id) ?? throw new APIException();
             return Ok(status);

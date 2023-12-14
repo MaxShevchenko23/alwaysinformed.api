@@ -4,13 +4,10 @@ using alwaysinformed_bll.Models.GET;
 using alwaysinformed_bll.Models.POST;
 using alwaysinformed_bll.Models.UPDATE;
 using alwaysinformed_bll.Validation;
-using alwaysinformed_dal.Data;
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using AutoMapper;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Core;
 
 namespace alwaysinformed_bll.Services
 {
@@ -25,14 +22,15 @@ namespace alwaysinformed_bll.Services
             this.mapper = mapper;
         }
         //Author
-        public async Task AddAsync(ArticleSandboxPostDto model)
+        public async Task<ArticleSandboxGetDto> AddAsync(ArticleSandboxPostDto model)
         {
             var entity = mapper.Map<ArticleSandbox>(model);
             entity.Url = UrlGenerator.GenerateUrl();
             entity.PublicationDate = DateTime.Now;
             entity.ArticleStatus = 5;//Pending Approval
-            await unitOfWork.ArticleSandboxRepository.AddAsync(entity);
-            await unitOfWork.SaveChanges();
+            var added = await unitOfWork.ArticleSandboxRepository.AddAsync(entity);
+
+            return mapper.Map<ArticleSandboxGetDto>(added);
         }
         //Author
         public async Task AddAsADraftAsync(ArticleSandboxPostDto model)
@@ -70,13 +68,31 @@ namespace alwaysinformed_bll.Services
             var author = await unitOfWork.ArticleSandboxRepository.GetByIdAsync(id);
             return mapper.Map<ArticleSandboxGetDto>(author);
         }
+
+        public async Task<ArticleSandboxGetDto> GetByURLAsync(string url)
+        {
+            var author = await unitOfWork.ArticleSandboxRepository.GetByURLAsync(url);
+            return mapper.Map<ArticleSandboxGetDto>(author);
+        }
+        //Admin
+        public async Task DeclineAsync(int articleSandboxId, string comment)
+        {
+            var entity = await unitOfWork.ArticleSandboxRepository.GetByIdAsync(articleSandboxId) ?? throw new WebException();
+
+            entity.ArticleStatus = 6;//Declined
+            entity.ArticleAdminComment = comment;
+
+            unitOfWork.ArticleSandboxRepository.Update(entity);
+            await unitOfWork.SaveChanges();
+
+        }
         //Author
-        public async Task UpdateAsync(ArticleSandboxUpdateDto model)
+        public async Task<ArticleSandboxGetDto> UpdateAsync(ArticleSandboxUpdateDto model)
         {
             var entity = mapper.Map<ArticleSandbox>(model);
             entity.ArticleStatus = 5;//Pending approval
-            unitOfWork.ArticleSandboxRepository.Update(entity);
-            await unitOfWork.SaveChanges();
+            var updated = await unitOfWork.ArticleSandboxRepository.Update(entity);
+            return mapper.Map<ArticleSandboxGetDto>(updated);
         }
         //Admin
         public async Task PublishAsync(int articleSandboxId)
@@ -84,11 +100,11 @@ namespace alwaysinformed_bll.Services
             try
             {
                 ArticleService articleService = new(unitOfWork, mapper);
+                
 
                 var entity = await unitOfWork.ArticleSandboxRepository.GetByIdAsync(articleSandboxId) ?? throw new WebException();
                 entity.ArticleStatus = 2;//Published
                 unitOfWork.ArticleSandboxRepository.Update(entity);
-
                 var article = await unitOfWork.ArticleRepository.GetArticleByArticleSandboxId(entity.SandboxId);
 
                 if (article != null)
@@ -104,14 +120,19 @@ namespace alwaysinformed_bll.Services
                 {
                     var articlePost = mapper.Map<ArticlePostDto>(entity);
                     articlePost.ArticleSandboxId = entity.SandboxId;
-                    await articleService.AddAsync(articlePost);
+                    var added = await articleService.AddAsync(articlePost);
                 }
 
                 await unitOfWork.SaveChanges();
+                return;
             }
             catch (InvalidOperationException)
             {
-                Log.Warning("InvalidOperationException occured, but data");
+                Log.Warning("InvalidOperationException occured");
+            }
+            catch (WebException)
+            {
+                Log.Warning("WebException occured");
             }
         }
         //Author

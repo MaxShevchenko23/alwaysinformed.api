@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace alwaysinformed.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -25,7 +25,7 @@ namespace alwaysinformed.Controllers
             return Ok(dtos);
         }
 
-        [HttpGet("get")]
+        [HttpGet("id")]
         public async Task<ActionResult<CategoryGetDto>> GetCategoryById([FromQuery] int id)
         {
             var article = await service.GetByIdAsync(id) ?? throw new APIException("ArgumentCannotBeNull");

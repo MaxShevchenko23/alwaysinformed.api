@@ -2,7 +2,6 @@
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Common;
 
 namespace alwaysinformed_dal.Repositories
 {
@@ -14,9 +13,11 @@ namespace alwaysinformed_dal.Repositories
         {
             this.context = context;
         }
-        public async Task AddAsync(Article entity)
+        public async Task<Article> AddAsync(Article entity)
         {
             await context.Articles.AddAsync(entity);
+            await context.SaveChangesAsync(true);
+            return await context.Articles.FirstOrDefaultAsync(a => a.Url == entity.Url);
         }
 
         public async Task AddFromSandbox(Article article)
@@ -26,7 +27,7 @@ namespace alwaysinformed_dal.Repositories
 
         public async Task DeleteArticleBySandboxId(int sandboxId)
         {
-            var article = await context.Articles.FirstAsync(a=>a.ArticleSandboxId==sandboxId) ?? throw new AiDbException();
+            var article = await context.Articles.FirstAsync(a => a.ArticleSandboxId == sandboxId) ?? throw new AiDbException();
             context.Remove(article);
         }
 
@@ -41,6 +42,23 @@ namespace alwaysinformed_dal.Repositories
             context.Articles.Remove(e);
         }
 
+        public async Task<List<Article>> SearchArticles(string? search)
+        {
+            var articles = context.Articles as IQueryable<Article>;
+
+            search = search.Trim();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                articles = articles.Where(a => a.Title.Contains(search)
+                || a.Content.Contains(search)
+                || a.ShortDescription.Contains(search)
+                || a.Category.CategoryName.Contains(search));
+            }
+
+            return await articles.ToListAsync();
+        }
+
         public async Task<List<Article>> GetAllAsync()
         {
             var articles = from a in context.Articles
@@ -49,10 +67,17 @@ namespace alwaysinformed_dal.Repositories
 
             return await articles.ToListAsync();
         }
+        public async Task<IQueryable<Article>> GetAllQueryableAsync()
+        {
+            var articles = from a in context.Articles
+                           join s in context.ArticleSandboxes on a.ArticleSandboxId equals s.SandboxId
+                           select a;
 
+            return articles;
+        }
         public async Task<Article?> GetArticleByArticleSandboxId(int articleSandboxId)
         {
-            return await context.Articles.AsNoTracking().FirstOrDefaultAsync(c=>c.ArticleSandboxId == articleSandboxId);
+            return await context.Articles.FirstOrDefaultAsync(c => c.ArticleSandboxId == articleSandboxId);
         }
 
         public async Task<Article> GetArticleByURL(string url)
@@ -68,18 +93,44 @@ namespace alwaysinformed_dal.Repositories
         public async Task<List<Article>> GetFirstRecords(int amount)
         {
             //статьи должны быть с привязанными articlesandboxid
-            return await context.Articles.Take(amount).ToListAsync();
+            return await context.Articles.Where(a => a.ArticleSandboxId > 0).Take(amount).ToListAsync();
         }
 
         public async Task<List<Article>> GetLastRecords(int amount)
         {
             //статьи должны быть с привязанными articlesandboxid
-            return await context.Articles.OrderByDescending(m => m.ArticleId).Take(amount).ToListAsync();
+            return await context.Articles.Where(a => a.ArticleSandboxId > 0).OrderByDescending(m => m.ArticleId).Take(amount).ToListAsync();
         }
 
-        public void Update(Article entity)
+        public async Task<Article> Update(Article entity)
         {
             context.Articles.Update(entity);
+            await context.SaveChangesAsync(true);
+            var updatedArticle = await context.Articles.FirstOrDefaultAsync(a => a.Url == entity.Url);
+            return updatedArticle;
+        }
+
+        public async Task<List<Article>> FilterByCategory(string? categoryName)
+        {
+            var articles = context.Articles;
+            categoryName = categoryName.Trim();
+
+            return await articles.Where(a => a.Category.CategoryName == categoryName).ToListAsync();
+        }
+
+        public async Task<List<Article>> FilterByAuthor(string? firstName, string? lastName)
+        {
+            var articles = context.Articles;
+            firstName = firstName.Trim();
+            lastName = lastName.Trim();
+
+            return await articles.Where(a => a.Author.FirstName.Contains(firstName) || a.Author.LastName.Contains(lastName)).ToListAsync();
+        }
+
+        public async Task<List<Article>> FilterByDate(DateTime? date)
+        {
+            var articles = context.Articles;
+            return await articles.Where(a => a.PublicationDate.Date == date).ToListAsync();
         }
     }
 }

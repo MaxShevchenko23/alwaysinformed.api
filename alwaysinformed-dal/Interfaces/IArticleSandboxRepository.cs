@@ -11,5 +11,7 @@ namespace alwaysinformed_dal.Interfaces
     {
         Task<List<ArticleSandbox>> GetByAuthorId(int id);
         Task<List<ArticleSandbox>> GetByUserId(int id);
+        Task<ArticleSandbox> GetByURLAsync(string url);
+
     }
 }

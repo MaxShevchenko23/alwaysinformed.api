@@ -6,16 +6,11 @@ using alwaysinformed_bll.Models.UPDATE;
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using AutoMapper;
-using AutoMapper.Configuration.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace alwaysinformed_bll.Services
 {
-    public class ArticleService : IArticleService,IDisposable
+    public class ArticleService : IArticleService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
@@ -25,24 +20,20 @@ namespace alwaysinformed_bll.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
-        public async Task AddAsync(ArticlePostDto model)
+        public async Task<ArticleGetFullDto> AddAsync(ArticlePostDto model)
         {
             var entity = mapper.Map<Article>(model);
             entity.Url = UrlGenerator.GenerateUrl();
             entity.PublicationDate = DateTime.Now;
-            await unitOfWork.ArticleRepository.AddAsync(entity);
+            var createdArticle =  await unitOfWork.ArticleRepository.AddAsync(entity);
             await unitOfWork.SaveChanges();
+            return mapper.Map<ArticleGetFullDto>(createdArticle);
         }
 
         public async Task DeleteByIdAsync(int modelId)
         {
             await unitOfWork.ArticleRepository.DeleteByIdAsync(modelId);
             await unitOfWork.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
         }
 
         public async Task<IEnumerable<ArticleGetFullDto>> GetAllAsync()
@@ -98,11 +89,45 @@ namespace alwaysinformed_bll.Services
             return articles.Select(m => mapper.Map<ArticleGetShortDto>(m));
         }
 
-        public async Task UpdateAsync(ArticleUpdateDto model)
+        public async Task<ArticleGetFullDto> UpdateAsync(ArticleUpdateDto model)
         {
             var entity = mapper.Map<Article>(model);
-            unitOfWork.ArticleRepository.Update(entity);
-            await unitOfWork.SaveChanges();
+            var updated = await unitOfWork.ArticleRepository.Update(entity);
+            return mapper.Map<ArticleGetFullDto>(updated);
+        }
+
+        public async Task<(IEnumerable<ArticleGetShortDto>, PagingMetaInfo)> GetFilteredArticles(string? categoryName, string? firstName, string? lastName, string? searchQuery, int pageNumber, int pageSize)
+        {
+            var articles = await unitOfWork.ArticleRepository.GetAllQueryableAsync();
+
+            if (!string.IsNullOrWhiteSpace(categoryName))
+            {
+                categoryName = categoryName.Trim();
+                articles = articles.Where(a => a.Category.CategoryName.Contains(categoryName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(firstName))
+            {
+                firstName = firstName.Trim();
+                articles = articles.Where(a => a.Author.FirstName.Contains(firstName));
+            }
+
+            if (!string.IsNullOrEmpty(lastName))
+            {
+                lastName = lastName.Trim();
+                articles = articles.Where(a => a.Author.LastName.Contains(categoryName));
+            }
+
+            articles = articles.OrderByDescending(a => a.ArticleId)
+                               .Skip(pageSize * (pageNumber - 1))
+                               .Take(pageSize);
+
+            int totalCount = await articles.CountAsync();
+
+            var articlesToReturn = articles.Select(a => mapper.Map<ArticleGetShortDto>(a));
+            var paginationMeta = new PagingMetaInfo(totalCount, pageSize, pageNumber);
+            
+            return (articlesToReturn, paginationMeta);
         }
     }
 }

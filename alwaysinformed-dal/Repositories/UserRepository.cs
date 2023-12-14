@@ -18,9 +18,12 @@ namespace alwaysinformed_dal.Repositories
         {
             this.context = context;
         }
-        public async Task AddAsync(User entity)
+        public async Task<User> AddAsync(User entity)
         {
             await context.Users.AddAsync(entity);
+            await context.SaveChangesAsync(true);
+            var added = await context.Users.Where(c=>c.Username == entity.Username).FirstOrDefaultAsync();
+            return added;
         }
 
         public void DeleteAsync(User entity)
@@ -55,9 +58,12 @@ namespace alwaysinformed_dal.Repositories
             return await context.Users.OrderByDescending(m => m.UserId).Take(amount).ToListAsync();
         }
 
-        public void Update(User entity)
+        public async Task<User> Update(User entity)
         {
             context.Users.Update(entity);
+            await context.SaveChangesAsync(true);
+            var updated = await context.Users.Where(u => u.UserId == entity.UserId).FirstOrDefaultAsync();
+            return updated;
         }
     }
 }

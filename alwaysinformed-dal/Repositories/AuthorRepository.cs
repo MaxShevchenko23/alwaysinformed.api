@@ -18,9 +18,12 @@ namespace alwaysinformed_dal.Repositories
         {
             this.context = context;
         }
-        public async Task AddAsync(Author entity)
+        public async Task<Author> AddAsync(Author entity)
         {
             await context.Authors.AddAsync(entity);
+            await context.SaveChangesAsync(true);
+            var added = await context.Authors.Where(a => a.FirstName == entity.FirstName && a.LastName == entity.LastName).FirstAsync();
+            return added;
         }
 
         public void DeleteAsync(Author entity)
@@ -32,7 +35,6 @@ namespace alwaysinformed_dal.Repositories
         {
             var entity = await context.Authors.FirstOrDefaultAsync(x => x.AuthorId == id) ?? throw new ArgumentNullException();
             context.Authors.Remove(entity);
-
         }
 
         public async Task<List<Author>> GetAllAsync()
@@ -55,9 +57,12 @@ namespace alwaysinformed_dal.Repositories
             return await context.Authors.OrderByDescending(m => m.AuthorId).Take(amount).ToListAsync();
         }
 
-        public void Update(Author entity)
+        public async Task<Author> Update(Author entity)
         {
             context.Authors.Update(entity);
+            await context.SaveChangesAsync(true);
+            var added = await context.Authors.Where(a => a.FirstName == entity.FirstName && a.LastName == entity.LastName).FirstAsync();
+            return added;
         }
     }
 }

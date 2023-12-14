@@ -9,5 +9,6 @@ namespace alwaysinformed_dal.Interfaces
 {
     public interface ICommentRepository:IRepository<Comment>
     {
+        Task<List<Comment>> GetCommentByArticleId(int articleId);
     }
 }

@@ -2,12 +2,7 @@
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace alwaysinformed_dal.Repositories
 {
@@ -19,9 +14,12 @@ namespace alwaysinformed_dal.Repositories
         {
             this.context = context;
         }
-        public async Task AddAsync(Comment entity)
+        public async Task<Comment> AddAsync(Comment entity)
         {
             await context.Comments.AddAsync(entity);
+            await context.SaveChangesAsync(true);
+            var added = await context.Comments.FirstAsync(a=>a.Text == entity.Text);
+            return added;
         }
 
         public void DeleteAsync(Comment entity)
@@ -31,9 +29,8 @@ namespace alwaysinformed_dal.Repositories
 
         public async Task DeleteByIdAsync(int id)
         {
-            var entity = await context.Comments.FirstOrDefaultAsync(x => x.CommentId == id) ?? throw new ArgumentNullException();
+            var entity = await context.Comments.FirstOrDefaultAsync(x => x.CommentId == id) ?? throw new NullReferenceException();
             context.Comments.Remove(entity);
-
         }
 
         public async Task<List<Comment>> GetAllAsync()
@@ -46,6 +43,11 @@ namespace alwaysinformed_dal.Repositories
             return await context.Comments.FirstOrDefaultAsync(x => x.CommentId == id) ?? throw new ArgumentNullException();
         }
 
+        public async Task<List<Comment>> GetCommentByArticleId(int articleId)
+        {
+            return await context.Comments.Where(c => c.ArticleId == articleId).ToListAsync() ?? throw new ArgumentNullException();
+        }
+
         public async Task<List<Comment>> GetFirstRecords(int amount)
         {
             return await context.Comments.Where(d => d.CommentId <= amount).ToListAsync();
@@ -56,9 +58,12 @@ namespace alwaysinformed_dal.Repositories
             return await context.Comments.OrderByDescending(m => m.CommentId).Take(amount).ToListAsync();
         }
 
-        public void Update(Comment entity)
+        public async Task<Comment> Update(Comment entity)
         {
             context.Comments.Update(entity);
+            await context.SaveChangesAsync(true);
+            var updated = await context.Comments.FirstAsync(a => a.Text == entity.Text);
+            return updated;
         }
     }
 }

@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using alwaysinformed_dal.Data;
-using alwaysinformed_bll.Interfaces;
 using alwaysinformed_bll.Services;
 using alwaysinformed_dal.Interfaces;
-using AutoMapper;
+
 
 // Add services to the container.
 Log.Logger = new LoggerConfiguration()
@@ -21,6 +20,15 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+               builder => builder.WithOrigins("https://localhost:7115")
+                                 .AllowAnyHeader()
+                                 .AllowAnyMethod()
+                                 .WithExposedHeaders("X-Pagination"));
+});
 
 
 builder.Services.AddScoped<UserService>();
@@ -40,7 +48,7 @@ builder.Services.AddControllers()
 );
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddDbContext<AidbContext>(dbContextOptions => dbContextOptions.UseSqlServer("Server=DESKTOP-KKLFTJP;Database=aidb;Trusted_Connection=True;TrustServerCertificate=True"));
+builder.Services.AddDbContext<AidbContext>(dbContextOptions => dbContextOptions.UseSqlServer("Server=DESKTOP-KKLFTJP;Database=aidb;Trusted_Connection=True;TrustServerCertificate=True"),ServiceLifetime.Transient);
 
 
 var app = builder.Build();
@@ -50,6 +58,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowLocalhost");
 
 app.UseHttpsRedirection();
 

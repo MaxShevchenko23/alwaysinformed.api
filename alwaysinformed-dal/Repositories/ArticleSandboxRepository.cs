@@ -14,9 +14,12 @@ namespace alwaysinformed_dal.Repositories
             this.context = context;
         }
 
-        public async Task AddAsync(ArticleSandbox entity)
+        public async Task<ArticleSandbox> AddAsync(ArticleSandbox entity)
         {
-           await context.AddAsync(entity);
+            await context.AddAsync(entity);
+            await context.SaveChangesAsync();
+            var added = await context.ArticleSandboxes.FirstOrDefaultAsync(a => a.Url==entity.Url);
+            return added;
         }
 
         public async void DeleteAsync(ArticleSandbox entity)
@@ -70,10 +73,13 @@ namespace alwaysinformed_dal.Repositories
         {
             return await context.ArticleSandboxes.OrderByDescending(m => m.SandboxId).Take(amount).ToListAsync();
         }
-
-        public void Update(ArticleSandbox entity)
+        public async Task<ArticleSandbox> Update(ArticleSandbox entity)
         {
             context.ArticleSandboxes.Update(entity);
+            context.SaveChanges(true);
+            //var updated = await context.ArticleSandboxes.FirstOrDefaultAsync(a => a.Url == entity.Url);
+            return new ArticleSandbox();
+            
         }
     }
 }

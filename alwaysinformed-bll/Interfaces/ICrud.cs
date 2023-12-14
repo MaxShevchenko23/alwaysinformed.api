@@ -12,9 +12,9 @@ namespace alwaysinformed_bll.Interfaces
 
         Task<Get> GetByIdAsync(int id);
 
-        Task AddAsync(Post model);
+        Task<Get> AddAsync(Post model);
 
-        Task UpdateAsync(Update model);
+        Task<Get> UpdateAsync(Update model);
 
         Task DeleteByIdAsync(int modelId);
     }

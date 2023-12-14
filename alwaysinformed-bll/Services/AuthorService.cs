@@ -22,11 +22,11 @@ namespace alwaysinformed_bll.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
-        public async Task AddAsync(AuthorPostDto model)
+        public async Task<AuthorGetDto> AddAsync(AuthorPostDto model)
         {
             var entity = mapper.Map<Author>(model);
-            await unitOfWork.AuthorRepository.AddAsync(entity);
-            unitOfWork.SaveChanges();
+            var added = await unitOfWork.AuthorRepository.AddAsync(entity);
+            return mapper.Map<AuthorGetDto>(added); 
         }
 
         public async Task DeleteByIdAsync(int modelId)
@@ -47,11 +47,12 @@ namespace alwaysinformed_bll.Services
             return mapper.Map<AuthorGetDto>(author);
         }
 
-        public async Task UpdateAsync(AuthorUpdateDto model)
+        public async Task<AuthorGetDto> UpdateAsync(AuthorUpdateDto model)
         {
             var entity = mapper.Map<Author>(model);
-            unitOfWork.AuthorRepository.Update(entity);
-            unitOfWork.SaveChanges();
+            var updated = await unitOfWork.AuthorRepository.Update(entity);
+
+            return mapper.Map<AuthorGetDto>(updated);
         }
     }
 }

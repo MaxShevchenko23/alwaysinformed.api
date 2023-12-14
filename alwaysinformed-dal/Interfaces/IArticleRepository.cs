@@ -1,13 +1,9 @@
 ﻿using alwaysinformed_dal.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace alwaysinformed_dal.Interfaces
 {
-    public interface IArticleRepository:IRepository<Article>
+    public interface IArticleRepository:IRepository<Article>,IFilter<Article>
     {
         Task AddFromSandbox(Article article);
         Task<List<Article>> GetFirstRecords(int amount);
@@ -16,5 +12,6 @@ namespace alwaysinformed_dal.Interfaces
         Task<Article> GetArticleByURL(string url);
         Task<Article?> GetArticleByArticleSandboxId(int articleSandboxId);
         Task DeleteArticleBySandboxId(int sandboxId);
+        Task<IQueryable<Article>> GetAllQueryableAsync();
     }
 }

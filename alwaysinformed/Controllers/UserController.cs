@@ -2,15 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using alwaysinformed_dal.Data;
 using alwaysinformed_bll.Services;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Humanizer;
 using alwaysinformed_bll.Models.GET;
 using alwaysinformed_bll.Models.POST;
 using alwaysinformed_bll.Models.UPDATE;
 
 namespace alwaysinformed.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -21,7 +19,7 @@ namespace alwaysinformed.Controllers
             this.service = service;
         }
          
-        [HttpGet("get")]
+        [HttpGet("id")]
         public async Task<ActionResult> UserGetAsync([FromQuery] int id)
         {
             var user = await service.GetByIdAsync(id) ?? throw new ArgumentNullException();
@@ -35,10 +33,10 @@ namespace alwaysinformed.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> UserPostAsync([FromBody] UserPostDto model)
+        public async Task<ActionResult<UserGetDto>> UserAddAsync([FromBody] UserPostDto model)
         {
-            await service.AddAsync(model);
-            return Ok();
+            var added = await service.AddAsync(model);
+            return Ok(added);
         }
        
         [HttpDelete]
@@ -49,10 +47,10 @@ namespace alwaysinformed.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateUserAsync([FromBody] UserUpdateDto model)
+        public async Task<ActionResult<UserGetDto>> UpdateUserAsync([FromBody] UserUpdateDto model)
         {
-            await service.UpdateAsync(model);
-            return Ok();
+            var updated = await service.UpdateAsync(model);
+            return Ok(updated);
         }
     }
 }

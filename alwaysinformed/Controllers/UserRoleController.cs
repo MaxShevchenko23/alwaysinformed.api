@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace alwaysinformed.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UserRoleController : ControllerBase
     {
@@ -15,14 +15,14 @@ namespace alwaysinformed.Controllers
         {
             this.service = service;
         }
-        [HttpGet("get")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<UserRoleGetDto>>> GetAllStatusesAsync()
         {
             var userRoles = await service.UserRoleGetDtoAllAsync();
             return Ok(userRoles);
         }
 
-        [HttpGet("get/id")]
+        [HttpGet("id")]
         public async Task<ActionResult<UserRoleGetDto>> GetStatusByIdAsync([FromQuery] int id)
         {
             var userRoles = await service.UserRoleGetDtoByIdAsync(id);

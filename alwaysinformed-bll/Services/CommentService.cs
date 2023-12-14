@@ -5,12 +5,7 @@ using alwaysinformed_bll.Models.UPDATE;
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace alwaysinformed_bll.Services
 {
@@ -25,17 +20,24 @@ namespace alwaysinformed_bll.Services
             this.mapper = mapper;
         }
 
-        public async Task AddAsync(CommentPostDto model)
+        public async Task<CommentGetDto> AddAsync(CommentPostDto model)
         {
             var entity = mapper.Map<Comment>(model);
             await unitOfWork.CommentRepository.AddAsync(entity);
-            unitOfWork.SaveChanges();
+            
+            var added = await unitOfWork.CommentRepository.AddAsync(entity);
+            return mapper.Map<CommentGetDto>(added);
         }
 
         public async Task DeleteByIdAsync(int modelId)
         {
             await unitOfWork.CommentRepository.DeleteByIdAsync(modelId);
             unitOfWork.SaveChanges();
+        }
+        public async Task<IEnumerable<CommentGetDto>> GetByArticleIdAsync(int id)
+        {
+            var entity = await unitOfWork.CommentRepository.GetCommentByArticleId(id);
+            return entity.Select(m=>mapper.Map<CommentGetDto>(m));
         }
 
         public async Task<IEnumerable<CommentGetDto>> GetAllAsync()
@@ -50,10 +52,10 @@ namespace alwaysinformed_bll.Services
             return mapper.Map<CommentGetDto>(entity);
         }
 
-        public async Task UpdateAsync(CommentUpdateDto model)
+        public async Task<CommentGetDto> UpdateAsync(CommentUpdateDto model)
         {
-            unitOfWork.CommentRepository.Update(mapper.Map<Comment>(model));
-            unitOfWork.SaveChanges();
+            var updated = await unitOfWork.CommentRepository.Update(mapper.Map<Comment>(model));
+            return mapper.Map<CommentGetDto>(updated);
         }
     }
 }

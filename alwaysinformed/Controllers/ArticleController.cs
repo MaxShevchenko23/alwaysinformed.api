@@ -4,69 +4,71 @@ using alwaysinformed_bll.Models.GET;
 using alwaysinformed_bll.Services;
 using alwaysinformed.Validation;
 using alwaysinformed_bll.Models.UPDATE;
+//using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace alwaysinformed.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class ArticleController : ControllerBase
 {
     private readonly ArticleService service;
-
+    private readonly int maxPageSize = 20;
     public ArticleController(ArticleService service)
     {
+
         this.service = service;
     }
-    [HttpGet("get/id")]
-    public async Task<ActionResult> ArticleGetByIdAsync([FromQuery] int id)
+    [HttpGet("id")]
+    public async Task<ActionResult<ArticleGetFullDto>> ArticleGetByIdAsync([FromQuery] int id)
     {
-        var article = await service.GetByIdAsync(id) ?? throw new APIException("ArgumentCannotBeNull");
+        var article = await service.GetByIdAsync(id);
+        if (article == null)
+        {
+            return NotFound();
+        }
         return Ok(article);
     }
 
-    [HttpGet("get/short")]
-    public async Task<ActionResult<IEnumerable<ArticleGetShortDto>>> GetAllShortArticlesAsync()
-    {
-        var dtos = await service.GetAllShortAsync() ?? throw new APIException();
-        return Ok(dtos);
-    }
 
-    [HttpGet("get/full")]
-    public async Task<ActionResult<IEnumerable<ArticleGetFullDto>>> GetAllFullArticlesAsync()
-    {
-        var dtos = await service.GetAllAsync() ?? throw new APIException();
-        return Ok(dtos);
-    }
-
-    [HttpGet("get/full/first")]
+    [HttpGet("full/latest")]
     public async Task<ActionResult<IEnumerable<ArticleGetFullDto>>> GetFullFirstArticlesAsync([FromQuery]int n)
     {
+        if (n > maxPageSize)
+            n = maxPageSize;
         var articles = await service.GetFullFirstNRecords(n);
         return Ok(articles);
     }
 
-    [HttpGet("get/short/first")]
+    [HttpGet("short/latest")]
     public async Task<ActionResult<IEnumerable<ArticleGetShortDto>>> GetShortFirstArticlesAsync([FromQuery] int n)
     {
+        if (n > maxPageSize)
+            n = maxPageSize;
         var articles = await service.GetShortFirstNRecords(n);
         return Ok(articles);
     }
 
-    [HttpGet("get/full/last")]
+    [HttpGet("full/oldest")]
     public async Task<ActionResult<IEnumerable<ArticleGetFullDto>>> GetFullLastArticlesAsync([FromQuery] int n)
     {
+        if (n > maxPageSize)
+            n = maxPageSize;
         var articles = await service.GetFullLastNRecords(n);
         return Ok(articles);
     }
 
-    [HttpGet("get/short/last")]
+    [HttpGet("short/oldest")]
     public async Task<ActionResult<IEnumerable<ArticleGetShortDto>>> GetShortLastArticlesAsync([FromQuery] int n)
     {
+        if (n > maxPageSize)
+            n = maxPageSize;
         var articles = await service.GetShortLastNRecords(n);
         return Ok(articles);
     }
 
-    [HttpGet("get/full/url")]
+    [HttpGet("full/url")]
     public async Task<ActionResult<ArticleGetShortDto>> GetFullArticleByURLAsync([FromQuery] string url)
     {
         var article = await service.GetArticleByURL(url);
@@ -75,23 +77,51 @@ public class ArticleController : ControllerBase
         return Ok(article);
     }
 
-    [HttpPost]
-    public async Task<ActionResult> ArticlePostAsync([FromBody] ArticlePostDto model)
+    //[HttpPost]
+    //public async Task<ActionResult> ArticlePostAsync([FromBody] ArticlePostDto model)
+    //{
+    //    try
+    //    {
+    //        await service.AddAsync(model);
+    //        return Ok();
+    //    }
+    //    catch (Exception)
+    //    {
+    //        return BadRequest();
+    //    }
+        
+    //}
+
+    [HttpGet("filter")]
+    public async Task<ActionResult<ArticleGetShortDto>> GetFilteredArticles([FromQuery] string? categoryName, 
+        [FromQuery] string? firstName, [FromQuery] string? lastName, [FromQuery] string? searchQuery, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        await service.AddAsync(model);
-        return Ok();
+   
+        if (pageSize > maxPageSize)
+            pageSize = maxPageSize;
+
+        var (articles,paginationMeta) = await service.GetFilteredArticles(categoryName, firstName, lastName, searchQuery,pageNumber,pageSize);
+
+        HttpContext.Response.Headers.Add("page-current", $"{paginationMeta.currentPage}");
+        HttpContext.Response.Headers.Add("page-size", $"{paginationMeta.pageSize}");
+        HttpContext.Response.Headers.Add("page-total", $"{paginationMeta.totalPagesAmount}");
+        HttpContext.Response.Headers.Add("items-count", $"{paginationMeta.totalItemCount}");
+
+        return Ok(articles);
     }
+
     [HttpDelete]
     public async Task<ActionResult> ArticleDeleteByIdAsync([FromQuery] int id)
     {
         await service.DeleteByIdAsync(id);
-        return Ok();
+        return NoContent();
     }
     [HttpPut]
     public async Task<ActionResult> ArticleUpdate([FromBody] ArticleUpdateDto model)
     {
         await service.UpdateAsync(model);
-        return Ok();
+        var newArticle = await GetFullArticleByURLAsync(model.Url);
+        return Ok(newArticle);
     }
 
 
