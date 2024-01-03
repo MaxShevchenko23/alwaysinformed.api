@@ -21,19 +21,25 @@ namespace alwaysinformed_dal.Repositories
         public async Task<Author> AddAsync(Author entity)
         {
             await context.Authors.AddAsync(entity);
+            var user = await context.Users.FindAsync(entity.UserId);
+            user.UserRole = 9; //author
             await context.SaveChangesAsync(true);
             var added = await context.Authors.Where(a => a.FirstName == entity.FirstName && a.LastName == entity.LastName).FirstAsync();
             return added;
         }
 
-        public void DeleteAsync(Author entity)
+        public async void DeleteAsync(Author entity)
         {
+            var user = await context.Users.FindAsync(entity.UserId);
+            user.UserRole = 8; //reader
             context.Authors.Remove(entity);
         }
 
         public async Task DeleteByIdAsync(int id)
         {
             var entity = await context.Authors.FirstOrDefaultAsync(x => x.AuthorId == id) ?? throw new ArgumentNullException();
+            var user = await context.Users.FindAsync(entity.UserId);
+            user.UserRole = 8; //reader
             context.Authors.Remove(entity);
         }
 

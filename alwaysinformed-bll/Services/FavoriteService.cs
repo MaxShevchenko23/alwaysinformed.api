@@ -41,6 +41,13 @@ namespace alwaysinformed_bll.Services
             var favorite = await unitOfWork.FavoriteRepository.GetByIdAsync(id);
             return mapper.Map<FavoriteGetDto>(favorite);
         }
+
+        public async Task<IEnumerable<ArticleGetShortDto>?> GetByUserId(int userId)
+        {
+            var favorites = await unitOfWork.FavoriteRepository.GetByUserId(userId);
+            return favorites.Select(a => mapper.Map<ArticleGetShortDto>(a));
+        }
+
         public async Task<FavoriteGetDto> UpdateAsync(FavoriteUpdateDto model)
         {
             var entity = mapper.Map<Favorite>(model);

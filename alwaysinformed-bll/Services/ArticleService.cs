@@ -109,13 +109,18 @@ namespace alwaysinformed_bll.Services
             if (!string.IsNullOrWhiteSpace(firstName))
             {
                 firstName = firstName.Trim();
-                articles = articles.Where(a => a.Author.FirstName.Contains(firstName));
+                articles = articles.Where(a => a.Author.FirstName.ToLower().Contains(firstName));
             }
 
             if (!string.IsNullOrEmpty(lastName))
             {
                 lastName = lastName.Trim();
-                articles = articles.Where(a => a.Author.LastName.Contains(categoryName));
+                articles = articles.Where(a => a.Author.LastName.ToLower().Contains(categoryName));
+            }
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.Trim();
+                articles = articles.Where(a=>a.Content.Contains(searchQuery) || a.Title.Contains(searchQuery) || a.ShortDescription.Contains(searchQuery));
             }
 
             articles = articles.OrderByDescending(a => a.ArticleId)

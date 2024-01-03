@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using alwaysinformed_dal.Entities;
+﻿using alwaysinformed_dal.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace alwaysinformed_dal.Data;
@@ -35,8 +33,10 @@ public partial class AidbContext : DbContext
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-KKLFTJP;Database=aidb;Trusted_Connection=True;TrustServerCertificate=True");
+    {
+        optionsBuilder.UseSqlServer("Server=DESKTOP-KKLFTJP;Database=aidb;Trusted_Connection=True;TrustServerCertificate=True");
+        optionsBuilder.EnableSensitiveDataLogging();
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,10 +50,6 @@ public partial class AidbContext : DbContext
             entity.Property(e => e.Url)
                 .HasDefaultValueSql("(N'')")
                 .HasColumnName("URL");
-
-            entity.HasOne(d => d.ArticleSandbox).WithMany(p => p.Articles)
-                .HasForeignKey(d => d.ArticleSandboxId)
-                .HasConstraintName("FK_Articles_ArticleSandbox");
 
             entity.HasOne(d => d.Author).WithMany(p => p.Articles)
                 .HasForeignKey(d => d.AuthorId)
@@ -127,6 +123,8 @@ public partial class AidbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
+            entity.Property(e => e.UserPhoto).HasMaxLength(50);
+
             entity.HasOne(d => d.UserRoleNavigation).WithMany(p => p.Users)
                 .HasForeignKey(d => d.UserRole)
                 .OnDelete(DeleteBehavior.ClientSetNull)

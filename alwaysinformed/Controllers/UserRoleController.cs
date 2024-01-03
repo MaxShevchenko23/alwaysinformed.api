@@ -1,11 +1,13 @@
 ﻿using alwaysinformed_bll.Models.GET;
 using alwaysinformed_bll.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace alwaysinformed.Controllers
 {
-    [Route("[controller]")]
+    //[Authorize]
+    [Route("api/userroles")]
     [ApiController]
     public class UserRoleController : ControllerBase
     {

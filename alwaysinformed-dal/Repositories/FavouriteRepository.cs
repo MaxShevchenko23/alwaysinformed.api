@@ -17,7 +17,7 @@ namespace alwaysinformed_dal.Repositories
         {
             await context.Favorites.AddAsync(entity);
             await context.SaveChangesAsync(true);
-            var added = await context.Favorites.Where(f=>f.UserId == entity.UserId).FirstAsync();
+            var added = await context.Favorites.Where(f => f.UserId == entity.UserId).FirstAsync();
             return added;
         }
 
@@ -30,7 +30,6 @@ namespace alwaysinformed_dal.Repositories
         {
             var entity = await context.Favorites.FirstOrDefaultAsync(x => x.FavoriteId == id) ?? throw new ArgumentNullException();
             context.Favorites.Remove(entity);
-
         }
 
         public async Task<List<Favorite>> GetAllAsync()
@@ -43,14 +42,11 @@ namespace alwaysinformed_dal.Repositories
             return await context.Favorites.FirstOrDefaultAsync(x => x.FavoriteId == id) ?? throw new ArgumentNullException();
         }
 
-        public async Task<List<Favorite>> GetFirstRecords(int amount)
+        public async Task<IEnumerable<Article>?> GetByUserId(int userId)
         {
-            return await context.Favorites.Where(d => d.FavoriteId <= amount).ToListAsync();
-        }
-
-        public async Task<List<Favorite>> GetLastRecords(int amount)
-        {
-            return await context.Favorites.OrderByDescending(m => m.FavoriteId).Take(amount).ToListAsync();
+            var favs = await context.Favorites.Where(f => f.UserId == userId).Select(f=>f.ArticleId).ToArrayAsync();
+            var favsArticles = await context.Articles.Where(a => favs.Contains(a.ArticleId)).ToListAsync();
+            return favsArticles;
         }
 
         public async Task<Favorite> Update(Favorite entity)

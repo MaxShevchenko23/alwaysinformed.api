@@ -15,5 +15,7 @@ namespace alwaysinformed_bll.Models.POST
         public string Email { get; set; } = null!;
 
         public int UserRole { get; set; }
+        public string? UserPhoto { get; set; }
+
     }
 }

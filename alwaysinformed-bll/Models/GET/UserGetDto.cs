@@ -13,5 +13,9 @@ namespace alwaysinformed_bll.Models.GET
         public string Username { get; set; } = null!;
 
         public int UserRole { get; set; }
+
+        public string? UserPhoto { get; set; }
+        public string Email { get; set; } = null!;
+
     }
 }

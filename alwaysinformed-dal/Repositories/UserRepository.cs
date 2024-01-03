@@ -48,14 +48,9 @@ namespace alwaysinformed_dal.Repositories
             return await context.Users.FirstOrDefaultAsync(x => x.UserId == id);
         }
 
-        public async Task<List<User>> GetFirstRecords(int amount)
+        public async Task<User?> GetByNameAndPassword(string username, string password)
         {
-            return await context.Users.Where(d => d.UserId <= amount).ToListAsync();
-        }
-
-        public async Task<List<User>> GetLastRecords(int amount)
-        {
-            return await context.Users.OrderByDescending(m => m.UserId).Take(amount).ToListAsync();
+            return await context.Users.FirstOrDefaultAsync(a => a.Username == username && a.PasswordHash == password);
         }
 
         public async Task<User> Update(User entity)

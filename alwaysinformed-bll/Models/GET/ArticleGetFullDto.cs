@@ -13,7 +13,9 @@ namespace alwaysinformed_bll.Models.GET
 
         public int ArticleId { get; set; }
 
-        public int? AuthorId { get; set; }
+        public int AuthorId { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
 
         public int? CategoryId { get; set; }
 
@@ -29,9 +31,9 @@ namespace alwaysinformed_bll.Models.GET
         public int? ArticleSandboxId { get; set; }
 
 
-        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public virtual IEnumerable<CommentGetDto>? Comments { get; set; }
 
-        public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+        public virtual IEnumerable<Favorite>? Favorites { get; set; }
 
     }
 }

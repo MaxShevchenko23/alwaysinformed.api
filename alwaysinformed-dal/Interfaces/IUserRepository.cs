@@ -9,5 +9,7 @@ namespace alwaysinformed_dal.Interfaces
 {
     public interface IUserRepository:IRepository<User>
     {
+        Task<User?> GetByNameAndPassword(string username, string password);
+
     }
 }

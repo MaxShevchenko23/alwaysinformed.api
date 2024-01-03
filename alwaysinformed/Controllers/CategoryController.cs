@@ -1,13 +1,13 @@
 ﻿using alwaysinformed.Validation;
 using alwaysinformed_bll.Models.GET;
-using alwaysinformed_bll.Models.POST;
-using alwaysinformed_bll.Models.UPDATE;
 using alwaysinformed_bll.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace alwaysinformed.Controllers
 {
-    [Route("[controller]")]
+    //[Authorize]
+    [Route("api/category")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -31,25 +31,25 @@ namespace alwaysinformed.Controllers
             var article = await service.GetByIdAsync(id) ?? throw new APIException("ArgumentCannotBeNull");
             return Ok(article);
         }
+        //all func-s below are accessable only for admins
+        //[HttpPost]
+        //public async Task<ActionResult<IEnumerable<ArticleGetShortDto>>> CategoryPostAsync([FromBody] CategoryPost dto)
+        //{
+        //    await service.AddAsync(dto);
+        //    return Ok();
+        //}
 
-        [HttpPost]
-        public async Task<ActionResult<IEnumerable<ArticleGetShortDto>>> CategoryPostAsync([FromBody] CategoryPost dto)
-        {
-            await service.AddAsync(dto);
-            return Ok();
-        }
-
-        [HttpDelete]
-        public async Task<ActionResult> CategoryDeletebyIdAsync([FromQuery] int id)
-        {
-            await service.DeleteByIdAsync(id);
-            return Ok();
-        }
-        [HttpPut]
-        public async Task<ActionResult> GetShortLastArticlesAsync([FromBody] CategoryUpdateDto dto)
-        {
-            await service.UpdateAsync(dto);
-            return Ok();
-        }
+        //[HttpDelete]
+        //public async Task<ActionResult> CategoryDeletebyIdAsync([FromQuery] int id)
+        //{
+        //    await service.DeleteByIdAsync(id);
+        //    return Ok();
+        //}
+        //[HttpPut]
+        //public async Task<ActionResult> GetShortLastArticlesAsync([FromBody] CategoryUpdateDto dto)
+        //{
+        //    await service.UpdateAsync(dto);
+        //    return Ok();
+        //}
     }
 }

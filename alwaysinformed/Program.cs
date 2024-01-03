@@ -3,6 +3,9 @@ using Serilog;
 using alwaysinformed_dal.Data;
 using alwaysinformed_bll.Services;
 using alwaysinformed_dal.Interfaces;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 
 // Add services to the container.
@@ -24,7 +27,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost",
-               builder => builder.WithOrigins("https://localhost:7115")
+               builder => builder.WithOrigins("http://127.0.0.1:5500","test")
                                  .AllowAnyHeader()
                                  .AllowAnyMethod()
                                  .WithExposedHeaders("X-Pagination"));
@@ -50,7 +53,33 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddDbContext<AidbContext>(dbContextOptions => dbContextOptions.UseSqlServer("Server=DESKTOP-KKLFTJP;Database=aidb;Trusted_Connection=True;TrustServerCertificate=True"),ServiceLifetime.Transient);
 
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Authentication:Issuer"],
+#if DEBUG
+            ValidAudience = "alwaysinformed",
+#else
+            ValidAudience = builder.Configuration["Authentication:Audience"],
+#endif
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Authentication:Secret"]))
+        };
 
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("forAdmin", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("userRole", "admin");
+    });
+});
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -59,9 +88,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowLocalhost");
+app.UseCors();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -25,8 +25,6 @@ public partial class Article
 
     public int? ArticleSandboxId { get; set; }
 
-    public virtual ArticleSandbox? ArticleSandbox { get; set; }
-
     public virtual Author? Author { get; set; }
 
     public virtual Category? Category { get; set; }

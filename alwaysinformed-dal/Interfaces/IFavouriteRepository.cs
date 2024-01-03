@@ -9,5 +9,6 @@ namespace alwaysinformed_dal.Interfaces
 {
     public interface IFavoriteRepository:IRepository<Favorite>
     {
+        Task<IEnumerable<Article>?> GetByUserId(int userId);
     }
 }

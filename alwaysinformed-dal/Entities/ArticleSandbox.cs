@@ -31,8 +31,6 @@ public partial class ArticleSandbox
 
     public virtual ArticleSandboxStatus ArticleStatusNavigation { get; set; } = null!;
 
-    public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
-
     public virtual Author? Author { get; set; }
 
     public virtual Category? Category { get; set; }

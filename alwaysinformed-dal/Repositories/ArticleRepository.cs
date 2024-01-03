@@ -63,6 +63,7 @@ namespace alwaysinformed_dal.Repositories
         {
             var articles = from a in context.Articles
                            join s in context.ArticleSandboxes on a.ArticleSandboxId equals s.SandboxId
+                           where s.ArticleStatus == 2
                            select a;
 
             return await articles.ToListAsync();
@@ -71,6 +72,7 @@ namespace alwaysinformed_dal.Repositories
         {
             var articles = from a in context.Articles
                            join s in context.ArticleSandboxes on a.ArticleSandboxId equals s.SandboxId
+                           where s.ArticleStatus == 2
                            select a;
 
             return articles;
