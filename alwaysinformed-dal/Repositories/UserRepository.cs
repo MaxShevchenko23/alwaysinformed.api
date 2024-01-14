@@ -2,11 +2,7 @@
 using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace alwaysinformed_dal.Repositories
 {
@@ -18,12 +14,17 @@ namespace alwaysinformed_dal.Repositories
         {
             this.context = context;
         }
-        public async Task<User> AddAsync(User entity)
+        public async Task<User?> AddAsync(User entity)
         {
-            await context.Users.AddAsync(entity);
-            await context.SaveChangesAsync(true);
-            var added = await context.Users.Where(c=>c.Username == entity.Username).FirstOrDefaultAsync();
-            return added;
+            var entry = await context.Users.FirstOrDefaultAsync(u=>u.Username == entity.Username && u.PasswordHash == entity.PasswordHash);
+            if (entry == null)
+            {
+                await context.Users.AddAsync(entity);
+                await context.SaveChangesAsync(true);
+                var added = await context.Users.Where(c=>c.Username == entity.Username).FirstOrDefaultAsync();
+                return added; 
+            }
+            return null;
         }
 
         public void DeleteAsync(User entity)

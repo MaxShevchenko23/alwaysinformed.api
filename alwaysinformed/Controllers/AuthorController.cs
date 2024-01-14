@@ -5,6 +5,7 @@ using alwaysinformed_bll.Models.UPDATE;
 using alwaysinformed_bll.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.NetworkInformation;
 
 namespace alwaysinformed.Controllers
 {
@@ -15,11 +16,28 @@ namespace alwaysinformed.Controllers
     {
         private readonly ArticleSandboxService sandboxService;
         private readonly CategoryService categoryService;
+        private readonly ArticleStatisticService statisticService;
+        private readonly AuthorService authorService;
+        private readonly ArticleService articleService;
 
-        public AuthorController(ArticleSandboxService sandboxService,CategoryService categoryService)
+
+        public AuthorController(ArticleSandboxService sandboxService,CategoryService categoryService,ArticleStatisticService statisticService,AuthorService authorService,ArticleService articleService)
         {
             this.sandboxService = sandboxService;
             this.categoryService = categoryService;
+            this.statisticService = statisticService;
+            this.authorService = authorService;
+            this.articleService = articleService;
+        }
+        //author profile
+        [HttpGet("profile")]
+        public async Task<ActionResult<AuthorGetDto>> GetAuthorProfileByUserId(int userId)
+        {
+            var model = await authorService.GetByUserIdAsync(userId);
+            if (model == null) 
+                return NotFound();
+
+            return Ok(model);
         }
         //sandbox
         [HttpGet("sandbox")]
@@ -81,18 +99,34 @@ namespace alwaysinformed.Controllers
             return Ok();
         }
         //categories
-        [HttpGet]
+        [HttpGet("category")]
         public async Task<ActionResult<IEnumerable<CategoryGetDto>>> GetAllCategoriesAsync()
         {
             var dtos = await categoryService.GetAllAsync();
             return Ok(dtos);
         }
 
-        [HttpGet("id")]
+        [HttpGet("category/id")]
         public async Task<ActionResult<CategoryGetDto>> GetCategoryById([FromQuery] int id)
         {
-            var article = await categoryService.GetByIdAsync(id) ?? throw new APIException("ArgumentCannotBeNull");
+            var article = await categoryService.GetByIdAsync(id);
+            if (article == null) return NotFound();
             return Ok(article);
         }
+        //statistic
+        [HttpGet("stats/userId")]
+        public async Task<ActionResult<List<ArticleStatisticGetDto>>> GetStatsByUserIdAsync(int userId)
+        {
+            var dtos = await statisticService.GetByUserIdAsync(userId);
+            if (dtos == null) return NotFound();
+
+            foreach (var dto in dtos)
+            {
+                var article = await articleService.GetByIdAsync(dto.ArticleId);
+                dto.ArticleName = article.Title;
+            }
+            return Ok(dtos);
+        }
+
     }
 }

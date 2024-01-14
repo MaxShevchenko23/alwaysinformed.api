@@ -66,7 +66,14 @@ namespace alwaysinformed.Controllers
         [HttpPost("sandbox/publish")]
         public async Task<ActionResult> PublishArticleFromSandbox([FromQuery] int articleSandboxId)
         {
-            await sandboxService.PublishAsync(articleSandboxId);
+            try
+            {
+                await sandboxService.PublishAsync(articleSandboxId);
+            }
+            catch
+            {
+                return BadRequest();
+            }
             return Ok();
         }
         [HttpPut("sandbox/decline")]
@@ -152,8 +159,8 @@ namespace alwaysinformed.Controllers
         [HttpPost("categories/add")]
         public async Task<ActionResult<IEnumerable<ArticleGetShortDto>>> CategoryPostAsync([FromBody] CategoryPost dto)
         {
-            await categoryService.AddAsync(dto);
-            return Ok();
+            var added = await categoryService.AddAsync(dto);
+            return Ok(added);
         }
 
         [HttpDelete("categories/remove")]

@@ -132,7 +132,7 @@ namespace alwaysinformed_bll.Services
             }
             catch (WebException)
             {
-                Log.Warning("WebException occured");
+                throw new KeyNotFoundException();
             }
         }
         //Author

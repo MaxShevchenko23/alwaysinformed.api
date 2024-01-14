@@ -22,7 +22,6 @@ namespace alwaysinformed_bll.Services
         public async Task<CategoryGetDto> AddAsync(CategoryPost model)
         {
             var entity = mapper.Map<Category>(model);
-            await unitOfWork.CategoryRepository.AddAsync(entity);
             var added = await unitOfWork.CategoryRepository.AddAsync(entity);
 
             return mapper.Map<CategoryGetDto>(added);
@@ -37,7 +36,7 @@ namespace alwaysinformed_bll.Services
         public async Task<IEnumerable<CategoryGetDto>> GetAllAsync()
         {
             var entities = await unitOfWork.CategoryRepository.GetAllAsync();
-            return entities.Select(d =>mapper.Map<CategoryGetDto>(d));
+            return entities.Select(d => mapper.Map<CategoryGetDto>(d));
         }
 
         public async Task<CategoryGetDto> GetByIdAsync(int id)

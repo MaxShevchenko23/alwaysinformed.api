@@ -18,14 +18,21 @@ namespace alwaysinformed_dal.Repositories
         {
             this.context = context;
         }
-        public async Task<Author> AddAsync(Author entity)
+        public async Task<Author?> AddAsync(Author entity)
         {
-            await context.Authors.AddAsync(entity);
-            var user = await context.Users.FindAsync(entity.UserId);
-            user.UserRole = 9; //author
-            await context.SaveChangesAsync(true);
-            var added = await context.Authors.Where(a => a.FirstName == entity.FirstName && a.LastName == entity.LastName).FirstAsync();
-            return added;
+            var entry = await context.Authors.FirstOrDefaultAsync(a => a.UserId == entity.UserId);
+            if (entry == null)
+            {
+                await context.Authors.AddAsync(entity);
+                var user = await context.Users.FindAsync(entity.UserId);
+                user.UserRole = 9; //author
+                await context.SaveChangesAsync(true);
+                var added = await context.Authors.Where(a => a.FirstName == entity.FirstName && a.LastName == entity.LastName).FirstAsync();
+                return added;
+            }
+            else
+                return null;
+            
         }
 
         public async void DeleteAsync(Author entity)
@@ -46,6 +53,11 @@ namespace alwaysinformed_dal.Repositories
         public async Task<List<Author>> GetAllAsync()
         {
             return await context.Authors.ToListAsync();
+        }
+
+        public async Task<Author> GetAuthorByUserIdAsync(int userId)
+        {
+            return await context.Authors.FirstOrDefaultAsync(a => a.UserId == userId);
         }
 
         public async Task<Author> GetByIdAsync(int id)

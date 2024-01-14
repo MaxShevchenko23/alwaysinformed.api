@@ -26,6 +26,9 @@ namespace alwaysinformed_bll.Services
             entity.Url = UrlGenerator.GenerateUrl();
             entity.PublicationDate = DateTime.Now;
             var createdArticle =  await unitOfWork.ArticleRepository.AddAsync(entity);
+
+            var createdStats = await unitOfWork.ArticleStatisticRepository.AddAsync(new() { ArticleId = createdArticle.ArticleId });
+
             await unitOfWork.SaveChanges();
             return mapper.Map<ArticleGetFullDto>(createdArticle);
         }

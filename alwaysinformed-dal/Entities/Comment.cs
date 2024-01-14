@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace alwaysinformed_dal.Entities;
+﻿namespace alwaysinformed_dal.Entities;
 
 public partial class Comment
 {

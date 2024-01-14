@@ -25,6 +25,8 @@ public partial class Article
 
     public int? ArticleSandboxId { get; set; }
 
+    public virtual ICollection<ArticleStatistic> ArticleStatistics { get; set; } = new List<ArticleStatistic>();
+
     public virtual Author? Author { get; set; }
 
     public virtual Category? Category { get; set; }

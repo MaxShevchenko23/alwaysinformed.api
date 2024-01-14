@@ -23,7 +23,7 @@ namespace alwaysinformed_bll.Services
         public async Task<CommentGetDto> AddAsync(CommentPostDto model)
         {
             var entity = mapper.Map<Comment>(model);
-            await unitOfWork.CommentRepository.AddAsync(entity);
+            entity.DateTime = DateTime.UtcNow;
             
             var added = await unitOfWork.CommentRepository.AddAsync(entity);
             return mapper.Map<CommentGetDto>(added);

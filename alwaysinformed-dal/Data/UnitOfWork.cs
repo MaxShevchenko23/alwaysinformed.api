@@ -1,4 +1,5 @@
-﻿using alwaysinformed_dal.Interfaces;
+﻿using alwaysinformed_dal.Entities;
+using alwaysinformed_dal.Interfaces;
 using alwaysinformed_dal.Repositories;
 
 namespace alwaysinformed_dal.Data
@@ -28,6 +29,8 @@ namespace alwaysinformed_dal.Data
         public IUserRoleRepository UserRoleRepository => new UserRoleRepository(context);
 
         public IArticleSandboxStatusRepository ArticleSandboxStatusRepository => new ArticleSandboxStatusRepository(context);
+
+        public IArticleStatisticRepository ArticleStatisticRepository => new ArticleStatisticRepository(context);       
 
         public async Task SaveChanges()
         {

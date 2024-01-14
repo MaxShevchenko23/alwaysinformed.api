@@ -9,5 +9,6 @@ namespace alwaysinformed_dal.Interfaces
 {
     public interface IAuthorRepository:IRepository<Author>
     {
+        Task<Author> GetAuthorByUserIdAsync(int userId);
     }
 }

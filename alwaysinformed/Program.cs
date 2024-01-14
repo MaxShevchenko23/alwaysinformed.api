@@ -5,7 +5,7 @@ using alwaysinformed_bll.Services;
 using alwaysinformed_dal.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.AspNetCore.Cors.Infrastructure;
+
 
 
 // Add services to the container.
@@ -43,6 +43,7 @@ builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<FavoriteService>();
 builder.Services.AddScoped<ArticleSandboxStatusService>();
 builder.Services.AddScoped<UserRoleService>();
+builder.Services.AddScoped<ArticleStatisticService>();
 
 
 builder.Services.AddControllers()
@@ -51,7 +52,7 @@ builder.Services.AddControllers()
 );
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddDbContext<AidbContext>(dbContextOptions => dbContextOptions.UseSqlServer("Server=DESKTOP-KKLFTJP;Database=aidb;Trusted_Connection=True;TrustServerCertificate=True"),ServiceLifetime.Transient);
+builder.Services.AddDbContext<AidbContext>(dbContextOptions => dbContextOptions.UseSqlServer("Server=DESKTOP-KKLFTJP;Database=aidb;Trusted_Connection=True;TrustServerCertificate=True"),ServiceLifetime.Scoped);
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>

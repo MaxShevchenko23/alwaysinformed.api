@@ -22,11 +22,15 @@ namespace alwaysinformed_bll.Services
             this.mapper = mapper;
         }
 
-        public async Task<UserGetDto> AddAsync(UserPostDto model)
+        public async Task<UserGetDto?> AddAsync(UserPostDto model)
         {
             var entity = mapper.Map<User>(model);
             var added = await unitOfWork.UserRepository.AddAsync(entity);
-            return mapper.Map<UserGetDto>(added);
+            if (added != null)
+            {
+                return mapper.Map<UserGetDto>(added);
+            }
+            return null;
         }
 
         public async Task DeleteByIdAsync(int modelId)

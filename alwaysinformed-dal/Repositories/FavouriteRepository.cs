@@ -15,8 +15,14 @@ namespace alwaysinformed_dal.Repositories
         }
         public async Task<Favorite> AddAsync(Favorite entity)
         {
+            var check = await context.Favorites.FirstOrDefaultAsync(a=>a.UserId== entity.UserId && a.ArticleId==entity.ArticleId);
+
+            if (check != null) 
+                return check;
+
             await context.Favorites.AddAsync(entity);
             await context.SaveChangesAsync(true);
+
             var added = await context.Favorites.Where(f => f.UserId == entity.UserId).FirstAsync();
             return added;
         }

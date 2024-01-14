@@ -13,8 +13,7 @@ namespace alwaysinformed_dal.Interfaces
         public IUserRepository UserRepository { get; }
         public IUserRoleRepository UserRoleRepository { get; }
         public IArticleSandboxStatusRepository ArticleSandboxStatusRepository { get; }
-
-
+        public IArticleStatisticRepository ArticleStatisticRepository { get; }
         public Task SaveChanges();
 
     }
