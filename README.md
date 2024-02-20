@@ -26,4 +26,8 @@ Author can:
 
 Admin can:
 - load all articles pending approval
-- 
+- decide whether an article is worth to be posted or no
+- delete users
+- delete comments
+- delete articles
+- everything reader can (besides making author's profile)
