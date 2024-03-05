@@ -7,6 +7,10 @@ using alwaysinformed_dal.Entities;
 using alwaysinformed_dal.Interfaces;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+<<<<<<< HEAD
+=======
+using System.Reflection.Metadata.Ecma335;
+>>>>>>> token
 
 namespace alwaysinformed_bll.Services
 {
@@ -35,7 +39,11 @@ namespace alwaysinformed_bll.Services
         public async Task DeleteByIdAsync(int modelId)
         {
             await unitOfWork.UserRepository.DeleteByIdAsync(modelId);
+<<<<<<< HEAD
             await unitOfWork.SaveChanges();
+=======
+            unitOfWork.SaveChanges();
+>>>>>>> token
         }
 
         public async Task<IEnumerable<UserGetDto>> GetAllAsync()

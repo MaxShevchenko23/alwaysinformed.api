@@ -1,16 +1,30 @@
 ﻿using alwaysinformed.Validation;
+<<<<<<< HEAD
+=======
+using alwaysinformed_bll.Interfaces;
+>>>>>>> token
 using alwaysinformed_bll.Models.GET;
 using alwaysinformed_bll.Models.POST;
 using alwaysinformed_bll.Models.UPDATE;
 using alwaysinformed_bll.Services;
+<<<<<<< HEAD
 using Microsoft.AspNetCore.Cors;
+=======
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
+>>>>>>> token
 using Microsoft.AspNetCore.Mvc;
 
 namespace alwaysinformed.Controllers
 {
     [Route("api/admin")]
     //[Authorize(Policy = "forAdmin")]
+<<<<<<< HEAD
     [EnableCors("AllowLocalhost")]
+=======
+    //[EnableCors("AllowLocalhost")]
+>>>>>>> token
     [ApiController]
     public class AdminController : ControllerBase
     {
@@ -146,18 +160,30 @@ namespace alwaysinformed.Controllers
             return Ok(dtos);
         }
 
+<<<<<<< HEAD
         [HttpGet("categories/{id}", Name = "GetCategoryById")]
         public async Task<ActionResult<CategoryGetDto>> GetCategoryById(int id)
+=======
+        [HttpGet("categories/id")]
+        public async Task<ActionResult<CategoryGetDto>> GetCategoryById([FromQuery] int id)
+>>>>>>> token
         {
             var article = await categoryService.GetByIdAsync(id) ?? throw new APIException("ArgumentCannotBeNull");
             return Ok(article);
         }
 
         [HttpPost("categories/add")]
+<<<<<<< HEAD
         public async Task<ActionResult<IEnumerable<CategoryGetDto>>> CategoryPostAsync([FromBody] CategoryPost dto)
         {
             var added = await categoryService.AddAsync(dto);
             return CreatedAtRoute("GetCategoryById",new { id = added.CategoryId}, added);
+=======
+        public async Task<ActionResult<IEnumerable<ArticleGetShortDto>>> CategoryPostAsync([FromBody] CategoryPost dto)
+        {
+            var added = await categoryService.AddAsync(dto);
+            return Ok(added);
+>>>>>>> token
         }
 
         [HttpDelete("categories/remove")]

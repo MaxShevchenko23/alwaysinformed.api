@@ -1,14 +1,28 @@
-using alwaysinformed.DbContexts;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using alwaysinformed_dal.Data;
+using alwaysinformed_bll.Services;
+using alwaysinformed_dal.Interfaces;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/alwaysinformedlogs.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddCors(options =>
 {
@@ -66,16 +80,6 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.RequireClaim("userRole", "admin");
     });
-    options.AddPolicy("forAuthor", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireClaim("userRole", "author");
-    });
-    options.AddPolicy("forUser(reader)", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireClaim("userRole", "reader");
-    });
 });
 var app = builder.Build();
 
@@ -85,7 +89,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors();
+
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

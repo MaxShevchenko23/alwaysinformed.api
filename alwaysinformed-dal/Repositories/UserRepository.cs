@@ -16,13 +16,22 @@ namespace alwaysinformed_dal.Repositories
         }
         public async Task<User?> AddAsync(User entity)
         {
+<<<<<<< HEAD
             var entry = await context.Users.FirstOrDefaultAsync(u => u.Username == entity.Username && u.PasswordHash == entity.PasswordHash);
+=======
+            var entry = await context.Users.FirstOrDefaultAsync(u=>u.Username == entity.Username && u.PasswordHash == entity.PasswordHash);
+>>>>>>> token
             if (entry == null)
             {
                 await context.Users.AddAsync(entity);
                 await context.SaveChangesAsync(true);
+<<<<<<< HEAD
                 var added = await context.Users.Where(c => c.Username == entity.Username).FirstOrDefaultAsync();
                 return added;
+=======
+                var added = await context.Users.Where(c=>c.Username == entity.Username).FirstOrDefaultAsync();
+                return added; 
+>>>>>>> token
             }
             return null;
         }
@@ -34,6 +43,7 @@ namespace alwaysinformed_dal.Repositories
 
         public async Task DeleteByIdAsync(int id)
         {
+<<<<<<< HEAD
             context.Favorites.Where(u => u.UserId == id)
                 .ExecuteDelete();
 
@@ -42,6 +52,11 @@ namespace alwaysinformed_dal.Repositories
 
 
             context.Users.Where(u => u.UserId == id).ExecuteDelete();
+=======
+            var entity = await context.Users.FirstOrDefaultAsync(x => x.UserId == id) ?? throw new ArgumentNullException();
+            context.Users.Remove(entity);
+
+>>>>>>> token
         }
 
         public async Task<List<User>> GetAllAsync()
