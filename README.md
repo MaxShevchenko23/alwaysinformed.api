@@ -14,8 +14,8 @@ Reader can:
 - load latest articles
 - load a chosen article
 - filter articles
-- like article
-- leave a comment
+- like articles
+- leave comments
 - make an author profile
 
 Author can:
